@@ -4,6 +4,7 @@ import * as store from './storage.js';
 import { render, escapeHtml, pageHref } from './wikitext.js';
 import { seedIfEmpty } from './seed.js';
 import { computeDiff, renderDiffHtml } from './diff.js';
+import { compressPageData, decompressPageData, makeShareUrl } from './share.js';
 
 const app = document.getElementById('app');
 export const specials = {}; // name -> (params) => html
@@ -15,7 +16,7 @@ const safeDecode = s => { try { return decodeURIComponent(s || ''); } catch { re
 const titleFromPath = p => store.normalizeTitle(safeDecode(p));
 const tabs = (title, active) => `
   <nav class="page-tabs" aria-label="Page">
-    ${[['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History'], ['rename', 'Rename'], ['delete', 'Delete']].map(([k, label]) =>
+    ${[['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History'], ['rename', 'Rename'], ['delete', 'Delete'], ['share', 'Share']].map(([k, label]) =>
       `<a href="#/${k}/${encodeURIComponent(title.replace(/ /g, '_'))}"${k === active ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
   </nav>`;
 
@@ -78,6 +79,41 @@ function deletePage(title) {
         <a href="${pageHref(title)}">Cancel</a>
       </div>
     </form>`;
+}
+
+function sharePage(title) {
+  if (!store.exists(title)) {
+    return `<h1>Share ${escapeHtml(title)}</h1>${tabs(title, 'share')}<p class="notice">This page does not exist yet, so there is nothing to share.</p>`;
+  }
+  const rev = store.load(title);
+  const isOversized = rev && rev.text.length > 100 * 1024;
+  return `<h1>Share ${escapeHtml(title)}</h1>${tabs(title, 'share')}
+    <div class="share-page">
+      <p>Share this page directly without a server. Anyone opening the link receives a compressed copy of the latest version and can import it into their browser.</p>
+      ${isOversized ? `
+        <p class="notice" role="alert"><strong>Page too large:</strong> This page is ${(rev.text.length / 1024).toFixed(0)} KB. Serverless link sharing is limited to pages under 100 KB so links are not truncated by browsers or chat apps. Use JSON Export from Special:AllPages to share large pages.</p>
+      ` : `
+        <div class="share-box">
+          <label for="share-url-input">Shareable link</label>
+          <div class="share-url-row">
+            <input id="share-url-input" type="text" readonly value="Generating link..." aria-label="Shareable link">
+            <button id="btn-copy-share" type="button">Copy link</button>
+          </div>
+          <p id="share-copy-status" role="status" class="notice" hidden></p>
+          <div class="share-details" id="share-details" hidden>
+            <span class="share-metric" id="share-token-metric"></span>
+          </div>
+        </div>
+      `}
+    </div>`;
+}
+
+function shareImportPage() {
+  return `<div id="share-import-container">
+    <h1>Shared Page</h1>
+    <p class="notice" id="share-import-status">Loading the shared page…</p>
+    <div id="share-import-content" hidden></div>
+  </div>`;
 }
 
 function editPage(title) {
@@ -218,6 +254,52 @@ function route() {
     const fn = specials[name];
     html = fn ? fn(new URLSearchParams(b || '')) : `<h1>Special:${escapeHtml(name)}</h1><p class="notice">No such special page.</p>`;
     docTitle = 'Special:' + name;
+  } else if (kind === 'share-import') {
+    docTitle = 'Shared Page';
+    html = shareImportPage();
+    queueMicrotask(async () => {
+      const statusEl = document.getElementById('share-import-status');
+      const contentEl = document.getElementById('share-import-content');
+      if (!statusEl || !contentEl) return;
+      try {
+        const data = await decompressPageData(a);
+        statusEl.hidden = true;
+        const exists = store.exists(data.title);
+        contentEl.innerHTML = `
+          <h2>Import shared page: ${escapeHtml(data.title)}</h2>
+          <div class="share-import-banner">
+            <p>This page was shared with you. It contains a revision from ${escapeHtml(fmtTime(data.ts))}.</p>
+            ${exists
+              ? `<p class="notice"><strong>Note:</strong> You already have a page titled "${escapeHtml(data.title)}" in your local wiki. Importing will save this as a new revision in its history.</p>`
+              : `<p class="notice">Importing will add this page to your local wiki.</p>`}
+            <div class="edit-actions">
+              <button type="button" id="btn-import-confirm">Import into wiki</button>
+              <a href="${pageHref('Main Page')}">Cancel</a>
+            </div>
+          </div>
+          <hr>
+          <h3>Preview</h3>
+          <article class="wiki-content">${renderText(data.text)}</article>
+        `;
+        contentEl.hidden = false;
+        document.getElementById('btn-import-confirm')?.addEventListener('click', () => {
+          try {
+            const cleanTitle = store.normalizeTitle(data.title);
+            if (!cleanTitle || cleanTitle.startsWith('Special:')) {
+              throw new Error('Choose a valid page title. Special pages cannot be imported.');
+            }
+            store.save(cleanTitle, data.text, 'Imported from shared link');
+            flash = `Imported "${cleanTitle}" successfully into your wiki.`;
+            location.hash = pageHref(cleanTitle);
+          } catch (err) {
+            alert('Failed to import page: ' + (err && err.message || err));
+          }
+        });
+      } catch (err) {
+        statusEl.textContent = 'Could not load shared page: ' + (err && err.message || err);
+        statusEl.hidden = false;
+      }
+    });
   } else {
     const title = titleFromPath(a) || 'Main Page';
     if (title.startsWith('Special:')) { location.replace(pageHref(title)); return; }
@@ -228,6 +310,7 @@ function route() {
       : kind === 'diff' ? diffPage(title, b, c)
       : kind === 'rename' ? renamePage(title)
       : kind === 'delete' ? deletePage(title)
+      : kind === 'share' ? sharePage(title)
       : viewPage(title, b === 'noredirect');
     if (kind === 'edit') {
       queueMicrotask(() => document.getElementById('edit-form')?.addEventListener('submit', e => {
@@ -277,6 +360,45 @@ function route() {
         const enc = encodeURIComponent(title.replace(/ /g, '_'));
         location.hash = `#/diff/${enc}/${oldId}...${newId}`;
       }));
+    } else if (kind === 'share') {
+      queueMicrotask(async () => {
+        const input = document.getElementById('share-url-input');
+        const details = document.getElementById('share-details');
+        const metric = document.getElementById('share-token-metric');
+        const copyBtn = document.getElementById('btn-copy-share');
+        const copyStatus = document.getElementById('share-copy-status');
+        const rev = store.load(title);
+        if (!rev || !input) return;
+        try {
+          const token = await compressPageData({ title, text: rev.text, ts: rev.ts, summary: rev.summary });
+          const url = makeShareUrl(token);
+          input.value = url;
+          if (metric && details) {
+            const origBytes = new TextEncoder().encode(rev.text).length;
+            let note = `Payload compressed from ${origBytes.toLocaleString()} bytes to ${token.length.toLocaleString()} chars.`;
+            if (url.length > 32768) {
+              note += ' Note: This link is longer than 32 KB and may be truncated by some chat apps or browsers.';
+            }
+            metric.textContent = note;
+            details.hidden = false;
+          }
+        } catch (err) {
+          input.value = 'Failed to generate link: ' + (err && err.message || err);
+        }
+        copyBtn?.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(input.value);
+          } catch {
+            input.select();
+            document.execCommand('copy');
+          }
+          if (copyStatus) {
+            copyStatus.textContent = 'Link copied.';
+            copyStatus.hidden = false;
+            setTimeout(() => { copyStatus.hidden = true; }, 3000);
+          }
+        });
+      });
     }
   }
   // One-time message from the previous action (e.g. a delete), read out by screen readers via role=status.

@@ -1397,3 +1397,39 @@ mark {
   color: var(--color-text-muted);
   margin: 0 0 var(--space-md);
 }
+
+/* Serverless page sharing */
+.share-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-top: var(--space-md);
+}
+
+.share-url-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.share-url-row input {
+  flex: 1;
+  font-family: var(--font-code);
+  font-size: 0.875rem;
+}
+
+.share-details {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
+.share-import-banner {
+  background: var(--color-surface-dim);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
