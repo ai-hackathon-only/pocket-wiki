@@ -77,9 +77,12 @@ export function rename(from, to, summary, leaveRedirect = true) {
   if (!data.pages[f]) throw new Error(`There is no page called "${f}".`);
   if (!t || t.startsWith('Special:')) throw new Error('Choose a valid new title.');
   if (t === f) throw new Error('The new title is the same as the old one.');
-  // A target that is only a redirect back to the source (left by an earlier rename) may be replaced, so a rename can be undone.
+  // A target that has only ever been a redirect, and now points back to the source, may be replaced,
+  // so a rename can be undone (also after A -> B -> C, where A holds two redirect revisions).
   const existing = data.pages[t];
-  if (existing && !(existing.revisions.length === 1 && redirectTarget(existing.revisions[0].text) === f)) {
+  const onlyRedirectHere = existing && existing.revisions.every(r => redirectTarget(r.text))
+    && redirectTarget(existing.revisions[existing.revisions.length - 1].text) === f;
+  if (existing && !onlyRedirectHere) {
     throw new Error(`A page called "${t}" already exists. Rename or delete it first.`);
   }
   const page = data.pages[t] = data.pages[f];
