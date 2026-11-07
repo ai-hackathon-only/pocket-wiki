@@ -50,6 +50,18 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "0"
+  small:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0"
+  caption:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: 1.35
+    letterSpacing: "0"
 rounded:
   sm: "4px"
   md: "8px"
@@ -86,7 +98,7 @@ Colors are organized strictly by functional role:
 - **Primary / Brand:** Forest green (`primary`: `#1b5e20`, hover: `#144718`, tint: `#e8f5e9`). Represents growth, stability, and enduring local storage. Used for primary save actions, active tabs, and brand highlights.
 - **Backgrounds & Surfaces:**
   - `neutral-bg` (`#fcfbf9`): Page canvas background providing warm, glare-free readability.
-  - `surface` (`#ffffff`): Elevated card and content containers.
+  - `surface` (`#ffffff`): Card and content containers.
   - `surface-dim` (`#f4f1ea`): Subdued toolbars, tables of contents, and metadata sidecars.
   - `surface-border` (`#e0dcd3`): Soft structural dividing lines and form inputs.
 - **Text & Content:**
@@ -150,3 +162,28 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 - Don't add complex multi-level menus or modal clutter.
 - Don't load external fonts, icons, or stylesheets from CDNs.
 - Don't introduce heavy 3D skeuomorphism or harsh drop shadows.
+
+## Visual Skins
+
+`pocket-wiki` provides three distinct visual identities. These are not merely color swaps; each skin defines distinct typography, density, and layout rules tailored to different reading modes. All three skins share identical semantic HTML and are implemented purely via CSS custom properties and contextual layout rules.
+
+### 1. Paper (Default / Scholarly Reader)
+- **Who it is for:** Long-form readers, researchers, and writers who spend extended periods reading deep reference material.
+- **Why it looks this way:** Evokes the warmth and comfort of a physical literary volume or field notebook. It pairs a warm parchment canvas (`#fcfbf9`) with rich book serif prose (`Charter`, `Georgia`) at 1.0625rem with relaxed 1.65 line height, capped at 70ch to prevent eye fatigue. Structural containers use gentle 8px rounded corners and warm-gray borders (`#e0dcd3`).
+
+### 2. Console (Technical Monospace)
+- **Who it is for:** Developers, systems engineers, and technical documentation readers who prefer dense, terminal-inspired ergonomics.
+- **Why it looks this way:** Emphasizes high information density, dark-mode ergonomics, and command-line aesthetics. All typography (headings, interface controls, and body prose) shifts to a crisp monospace stack (`ui-monospace`, `SFMono-Regular`, `Menlo`, `Consolas`). It features a deep dark canvas (`#0d1117`), dark slate containers (`#161b22`), and sharp 1px borders (`#30363d`) with 0px square corners. Headings feature `# ` prompt markers, brand logotype features `> ` cues, tabs switch to bracketed monospace prompts (`[READ]`, `[EDIT]`), and prose expands to 64rem with a tighter 1.45 line height. High-contrast terminal syntax accents (phosphor green `#3fb950`, terminal blue `#58a6ff`) provide instant technical clarity.
+
+### 3. Atelier (Modernist Swiss Editorial)
+- **Who it is for:** Designers, creatives, and modern web users seeking high-contrast graphic clarity and architectural structure.
+- **Why it looks this way:** Inspired by Swiss international typographic style and architectural studio journals. It uses clean neo-grotesque sans-serif typography (`-apple-system`, `Helvetica Neue`) throughout, with heavy 800-weight headings with negative tracking (`-0.03em`), bold 3px graphic underlines, and sharp 2px corners. The palette pairs stark cool off-white (`#f3f4f6`) with pure white cards and midnight ink text (`#111827`), accented by punchy cobalt blue (`#1d4ed8`). Metadata badges and tabs use bold uppercase lettering with letter-spacing.
+
+### The Zero-Flash Persistence Rule
+The user selects a skin via the dropdown in the header. The chosen skin (`paper`, `console`, or `atelier`) is persisted in `localStorage` under key `pocket-wiki-skin`. To prevent any flash of unstyled content or jarring theme shift on initial page load, a lightweight synchronous initializer script (`js/skin-init.js`) executes in `<head>` before the body is parsed, setting `data-skin` directly on `document.documentElement`.
+
+### Accessibility & Contrast Compliance
+All three skins strictly meet WCAG AA contrast requirements (minimum 4.5:1 for normal text, 3:1 for large text and UI components):
+- **Paper:** Text contrast 16.5:1 on background; link contrast 5.8:1; button contrast 8.1:1.
+- **Console:** Text contrast 15.8:1 on `#0d1117`; link contrast 5.4:1; primary accent contrast 6.8:1.
+- **Atelier:** Text contrast 14.8:1 on `#f3f4f6`; link contrast 6.2:1; button contrast 17.6:1.

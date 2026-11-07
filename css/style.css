@@ -1,7 +1,11 @@
 /* pocket-wiki — Visual Design System */
 /* Follows DESIGN.md specifications & impeccable design guidelines */
 
-:root {
+/* Visual Skins System: Paper, Console, Atelier */
+
+/* Skin 1: Paper (Default / Warm Scholarly Reader) */
+:root,
+[data-skin="paper"] {
   --color-primary: #1b5e20;
   --color-primary-hover: #144718;
   --color-primary-light: #e8f5e9;
@@ -37,6 +41,87 @@
   --space-xxl: 48px;
 
   --max-content-width: 54rem;
+  --line-height-body: 1.65;
+}
+
+/* Skin 2: Console (Technical Monospace & High-Density Dark Theme) */
+[data-skin="console"] {
+  --color-primary: #238636;
+  --color-primary-hover: #2ea043;
+  --color-primary-light: #16361f;
+  --color-accent: #1f6feb;
+  --color-neutral-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-dim: #21262d;
+  --color-surface-border: #30363d;
+  --color-text-primary: #f0f6fc;
+  --color-text-secondary: #8b949e;
+  --color-text-muted: #8b949e;
+  --color-link: #58a6ff;
+  --color-link-hover: #79c0ff;
+  --color-link-new: #ff7b72;
+  --color-link-new-hover: #ffa198;
+  --color-status-diff-add: #3fb950;
+  --color-status-diff-del: #f85149;
+
+  --font-display: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-heading: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-body: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  --max-content-width: 64rem;
+  --line-height-body: 1.45;
+}
+
+/* Skin 3: Atelier (Modernist Swiss High-Contrast Graphic Theme) */
+[data-skin="atelier"] {
+  --color-primary: #111827;
+  --color-primary-hover: #1f2937;
+  --color-primary-light: #e5e7eb;
+  --color-accent: #1d4ed8;
+  --color-neutral-bg: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-surface-dim: #e5e7eb;
+  --color-surface-border: #111827;
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #4b5563;
+  --color-link: #1d4ed8;
+  --color-link-hover: #1e40af;
+  --color-link-new: #b91c1c;
+  --color-link-new-hover: #7f1d1d;
+  --color-status-diff-add: #15803d;
+  --color-status-diff-del: #b91c1c;
+
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  --max-content-width: 58rem;
+  --line-height-body: 1.5;
 }
 
 /* Box sizing reset & base styles */
@@ -148,6 +233,30 @@ a.wikilink.new:hover {
   background-color: var(--color-surface-dim);
 }
 
+/* Skin Switcher */
+.skin-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.skin-select {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  padding: 6px 10px;
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.skin-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-light);
+}
+
 /* Header Search */
 .search {
   display: flex;
@@ -180,6 +289,10 @@ a.wikilink.new:hover {
   margin: 0 auto;
   padding: var(--space-xl) var(--space-lg);
   flex: 1;
+}
+
+#app:focus {
+  outline: none;
 }
 
 /* Typography Headings */
@@ -254,6 +367,13 @@ p {
 /* Wiki Content Render */
 .wiki-content {
   margin-bottom: var(--space-xl);
+}
+
+.wiki-content p,
+.wiki-content ul,
+.wiki-content ol {
+  max-width: 65ch;
+  text-wrap: pretty;
 }
 
 .wiki-content ul, .wiki-content ol {
@@ -644,7 +764,7 @@ mark {
 
 .search-exact-title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.0625rem;
 }
 
 .search-title-matches {
@@ -854,4 +974,101 @@ mark {
   font-weight: 600;
   margin-top: var(--space-sm);
   font-family: var(--font-heading);
+}
+
+/* ==========================================================================
+   Skin-Specific Layout & Identity Overrides
+   ========================================================================== */
+
+/* Console Skin: Monospace, Terminal Density, Sharp Geometry */
+[data-skin="console"] body {
+  line-height: var(--line-height-body);
+}
+
+[data-skin="console"] .site-header {
+  border-bottom: 1px solid var(--color-surface-border);
+}
+
+[data-skin="console"] .brand::before {
+  content: "> ";
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+[data-skin="console"] h1::before {
+  content: "# ";
+  color: var(--color-text-secondary);
+  font-weight: normal;
+}
+
+[data-skin="console"] .page-tabs a {
+  font-family: var(--font-code);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+  border: 1px solid transparent;
+}
+
+[data-skin="console"] .page-tabs a[aria-current="page"] {
+  border-color: var(--color-surface-border);
+  background-color: var(--color-surface-dim);
+  border-bottom-color: var(--color-surface-dim);
+}
+
+[data-skin="console"] button,
+[data-skin="console"] input,
+[data-skin="console"] select,
+[data-skin="console"] textarea {
+  border-radius: 0;
+}
+
+/* Atelier Skin: Modernist Swiss High-Contrast Graphic Identity */
+[data-skin="atelier"] body {
+  line-height: var(--line-height-body);
+}
+
+[data-skin="atelier"] h1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  border-bottom: 3px solid var(--color-text-primary);
+  padding-bottom: 0.35rem;
+}
+
+[data-skin="atelier"] .brand {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+}
+
+[data-skin="atelier"] .site-nav a {
+  font-weight: 600;
+}
+
+[data-skin="atelier"] .page-tabs a {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.8125rem;
+  border-bottom-width: 3px;
+}
+
+[data-skin="atelier"] .page-tabs a[aria-current="page"] {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+[data-skin="atelier"] .page-meta {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+[data-skin="atelier"] button {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  font-size: 0.8125rem;
 }

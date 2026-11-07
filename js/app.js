@@ -107,6 +107,19 @@ document.getElementById('search-form').addEventListener('submit', e => {
   if (q) location.hash = '#/special/Search/q=' + encodeURIComponent(q);
 });
 
+const skinSelect = document.getElementById('skin-select');
+if (skinSelect) {
+  const currentSkin = localStorage.getItem('pocket-wiki-skin') || 'paper';
+  skinSelect.value = currentSkin;
+  skinSelect.addEventListener('change', e => {
+    const skin = e.target.value;
+    document.documentElement.setAttribute('data-skin', skin);
+    try {
+      localStorage.setItem('pocket-wiki-skin', skin);
+    } catch {}
+  });
+}
+
 seedIfEmpty(store);
 // Load optional special pages, then start routing.
 import('./special.js').then(m => m.register?.(specials, { store, renderText, escapeHtml, pageHref, fmtTime }))

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>pocket-wiki</title>
+  <script src="js/skin-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,6 +16,14 @@
       <a href="#/special/AllPages">All pages</a>
       <a href="#/special/RecentChanges">Recent changes</a>
     </nav>
+    <div class="skin-switcher">
+      <label for="skin-select" class="visually-hidden">Choose visual skin</label>
+      <select id="skin-select" class="skin-select" aria-label="Visual skin">
+        <option value="paper">Paper</option>
+        <option value="console">Console</option>
+        <option value="atelier">Atelier</option>
+      </select>
+    </div>
     <form class="search" role="search" id="search-form">
       <label for="search-input" class="visually-hidden">Search pages</label>
       <input id="search-input" name="q" type="search" placeholder="Search pages">
