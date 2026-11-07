@@ -46,8 +46,8 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 ai-hackathon:
   repo: ai-hackathon-only/pocket-wiki
   owner: hueitan            # the human who is responsible
-  start: 2026-11-07T10:30+01:00
-  end:   2026-11-07T14:30+01:00
+  start: 2026-11-07T10:01+01:00
+  end:   2026-11-07T14:01+01:00
   round_minutes: 5                # how often each agent wakes up
   when_done_early: stretch          # stop | stretch | polish-until-end
   seats:                          # identities = GitHub Apps; roles are chosen by the agents
