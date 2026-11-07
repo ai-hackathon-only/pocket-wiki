@@ -48,13 +48,24 @@ export function rename(from, to, summary, leaveRedirect = true) {
   if (!data.pages[f]) throw new Error(`There is no page called "${f}".`);
   if (!t || t.startsWith('Special:')) throw new Error('Choose a valid new title.');
   if (t === f) throw new Error('The new title is the same as the old one.');
-  if (data.pages[t]) throw new Error(`A page called "${t}" already exists. Rename or delete it first.`);
+  // A target that is only a redirect back to the source (left by an earlier rename) may be replaced, so a rename can be undone.
+  const existing = data.pages[t];
+  if (existing && !(existing.revisions.length === 1 && redirectTarget(existing.revisions[0].text) === f)) {
+    throw new Error(`A page called "${t}" already exists. Rename or delete it first.`);
+  }
   const page = data.pages[t] = data.pages[f];
   delete data.pages[f];
   const ts = new Date().toISOString();
   const last = page.revisions[page.revisions.length - 1];
   const note = `Renamed from ${f}` + (summary ? `: ${summary}` : '');
   page.revisions.push({ id: page.revisions.length + 1, ts, text: last.text, summary: note });
+  // Point older redirects at the new title, so A -> B -> C never leaves a two-hop chain.
+  for (const [name, p] of Object.entries(data.pages)) {
+    const r = p.revisions[p.revisions.length - 1];
+    if (name !== t && redirectTarget(r.text) === f) {
+      p.revisions.push({ id: p.revisions.length + 1, ts, text: `#REDIRECT [[${t}]]`, summary: `Redirect now points to ${t} after rename` });
+    }
+  }
   if (leaveRedirect) {
     data.pages[f] = { revisions: [{ id: 1, ts, text: `#REDIRECT [[${t}]]`, summary: `Redirect to ${t} after rename` }] };
   }

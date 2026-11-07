@@ -19,15 +19,18 @@ const tabs = (title, active) => `
       `<a href="#/${k}/${encodeURIComponent(title.replace(/ /g, '_'))}"${k === active ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
   </nav>`;
 
+let flash = '';
 const enc = title => encodeURIComponent(title.replace(/ /g, '_'));
 
-// Follows one redirect hop ("#REDIRECT [[Target]]"); '#/wiki/Old/noredirect' shows the redirect page itself.
+// Follows up to 5 redirect hops ("#REDIRECT [[Target]]") and stops on a loop;
+// '#/wiki/Old/noredirect' shows the redirect page itself.
 function viewPage(title, noRedirect) {
   let rev = store.load(title);
   let from = null;
-  const target = rev && !noRedirect && store.redirectTarget(rev.text);
-  if (target && target !== title) {
-    from = title;
+  const seen = new Set([title]);
+  for (let target; rev && !noRedirect && seen.size <= 5 && (target = store.redirectTarget(rev.text)) && !seen.has(target);) {
+    from = from || title;
+    seen.add(target);
     title = target;
     rev = store.load(title);
   }
@@ -258,6 +261,7 @@ function route() {
       queueMicrotask(() => document.getElementById('delete-form')?.addEventListener('submit', e => {
         e.preventDefault();
         store.remove(title);
+        flash = `Deleted "${title}" and its history.`;
         location.hash = '#/special/AllPages';
       }));
     } else if (kind === 'history') {
@@ -272,6 +276,8 @@ function route() {
       }));
     }
   }
+  // One-time message from the previous action (e.g. a delete), read out by screen readers via role=status.
+  if (flash) { html = `<p class="notice" role="status">${escapeHtml(flash)}</p>` + html; flash = ''; }
   app.innerHTML = html;
   document.title = `${docTitle} · pocket-wiki`;
   app.focus({ preventScroll: true });
