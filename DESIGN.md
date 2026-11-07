@@ -119,11 +119,12 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 
 - **Article Prose:** Serif typography using system-available classic book serifs (`Charter`, `Georgia`, `'Times New Roman'`) at `1.0625rem` (17px) with generous `1.65` line height.
 - **Interface & Headings:** Sans-serif typography (`-apple-system`, `BlinkMacSystemFont`, `'Segoe UI'`, `Roboto`, sans-serif) for article headings (`H1`, `H2`, `H3`), tabs, buttons, search bars, and navigation labels.
+- **Small Meta Text:** `0.875rem` sans for revision times, revision ids, status lines and the export/import JSON boxes.
 - **Code & Wikitext Source:** Monospace stack (`ui-monospace`, `SFMono-Regular`, `Consolas`, `Menlo`, monospace) for edit mode textareas, code blocks, and JSON export/import displays.
 
 ## Layout
 
-**The Single Column Center Rule.** Article content is centered within a maximum width of `54rem` (864px) with generous horizontal padding (`24px` on desktop, `16px` on mobile), ensuring optimal line length (65–75 characters per line) for deep reading.
+**The Single Column Center Rule.** Article content is centered within a maximum width of `54rem` (864px) with generous horizontal padding (`24px` on desktop, `16px` on mobile), and paragraphs and lists inside it are capped at `58ch` (1ch is the width of "0", so this holds about 72 serif characters) and paragraphs use `text-wrap: pretty` to avoid one-word last lines. Headings are not capped. The column alone would allow about 107.
 
 **The Mobile Parity Rule.** The wiki layout must remain completely functional, readable, and touch-friendly at 390px mobile viewport with zero horizontal overflow:
 - Top bar stacks or collapses neatly.

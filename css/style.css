@@ -293,6 +293,8 @@ a.wikilink.new:hover {
   flex: 1;
 }
 
+/* #app gets focus after each route change so screen readers start at the
+   content; it is not a control, so no visible ring. */
 #app:focus {
   outline: none;
 }
@@ -371,11 +373,13 @@ p {
   margin-bottom: var(--space-xl);
 }
 
-.wiki-content p,
-.wiki-content ul,
-.wiki-content ol,
-.notice {
-  max-width: 65ch;
+/* Keep prose lines near 70 characters (DESIGN.md: comfortable reading).
+   1ch is the width of "0", wider than an average serif letter, so 58ch holds about 72. */
+.wiki-content p, .wiki-content ul, .wiki-content ol, .notice {
+  max-width: 58ch;
+}
+
+.wiki-content p {
   text-wrap: pretty;
 }
 
