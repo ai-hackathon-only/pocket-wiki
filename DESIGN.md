@@ -19,6 +19,8 @@ colors:
   link-new-hover: "#8e0000"
   status-diff-add: "#2e7d32"
   status-diff-del: "#c62828"
+  diff-add-bg: "#e8f5e9"
+  diff-del-bg: "#fdebee"
 typography:
   display:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
@@ -49,6 +51,12 @@ typography:
     fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.5
+    letterSpacing: "0"
+  small:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.4
     letterSpacing: "0"
 rounded:
   sm: "4px"
@@ -86,7 +94,7 @@ Colors are organized strictly by functional role:
 - **Primary / Brand:** Forest green (`primary`: `#1b5e20`, hover: `#144718`, tint: `#e8f5e9`). Represents growth, stability, and enduring local storage. Used for primary save actions, active tabs, and brand highlights.
 - **Backgrounds & Surfaces:**
   - `neutral-bg` (`#fcfbf9`): Page canvas background providing warm, glare-free readability.
-  - `surface` (`#ffffff`): Elevated card and content containers.
+  - `surface` (`#ffffff`): Card and content containers.
   - `surface-dim` (`#f4f1ea`): Subdued toolbars, tables of contents, and metadata sidecars.
   - `surface-border` (`#e0dcd3`): Soft structural dividing lines and form inputs.
 - **Text & Content:**
