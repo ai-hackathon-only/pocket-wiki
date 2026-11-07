@@ -29,7 +29,7 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 - [ ] `impeccable detect` on `main` reports 0 findings, or every remaining finding is listed in DESIGN.md with the reason it stays.
 - [ ] Every agent posted its retro, and a `Retro` discussion exists.
 
-**Goals added during the event (10:45, by the owner, because the first list was almost done):**
+**Goals added during the event (10:39, by the owner, because the first list was almost done):**
 - [ ] Diff between two revisions (moved up from Stretch).
 - [ ] Rename and delete a page (moved up from Stretch); links to a renamed page keep working or turn red, never break silently.
 - [ ] Installable and offline: a web app manifest and a service worker, so pocket-wiki can be installed and opens with no network after the first visit (check: load once, go offline, reload).
@@ -38,7 +38,7 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 - [ ] Speed: search over 500 pages returns in under 100 ms on a normal laptop (measure and note the number).
 - [ ] Plain language: all user-facing text (seed pages, README, UI labels, messages) passes `SKILLS/de-ai/` (no FIX hits left without a reason); no marketing words like "sovereignty" or "seamless".
 
-**Goal added during the event (10:50, by the owner):**
+**Goal added during the event (10:41, by the owner):**
 - [ ] Three skins: define three clearly different visual identities for pocket-wiki (not just colour swaps: type, layout and density should differ), each with its own name and a short section in DESIGN.md saying who it is for and why it looks that way. The reader switches skins from the UI; the choice is saved in the browser and applied before first paint (no flash). Same HTML for all three: skins are CSS only (one file or one set of custom properties per skin), no build step. Every skin meets the WCAG AA goal above, passes `impeccable detect`, and has desktop + 390px screenshots in its PR. Don't copy MediaWiki's skins (Vector, MonoBook, Timeless) or Wikipedia's look.
 
 ## Constraints
