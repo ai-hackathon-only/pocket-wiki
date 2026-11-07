@@ -116,7 +116,7 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 
 ## Layout
 
-**The Single Column Center Rule.** Article content is centered within a maximum width of `54rem` (864px) with generous horizontal padding (`24px` on desktop, `16px` on mobile), and prose blocks inside it (paragraphs, lists, headings) are capped at `70ch`, so lines stay near 65–75 characters for deep reading. The column alone would allow about 107.
+**The Single Column Center Rule.** Article content is centered within a maximum width of `54rem` (864px) with generous horizontal padding (`24px` on desktop, `16px` on mobile), and paragraphs and lists inside it are capped at `58ch` (1ch is the width of "0", so this holds about 72 serif characters) and paragraphs use `text-wrap: pretty` to avoid one-word last lines. Headings are not capped. The column alone would allow about 107.
 
 **The Mobile Parity Rule.** The wiki layout must remain completely functional, readable, and touch-friendly at 390px mobile viewport with zero horizontal overflow:
 - Top bar stacks or collapses neatly.
