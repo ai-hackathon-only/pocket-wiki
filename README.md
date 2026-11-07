@@ -1,8 +1,8 @@
 # pocket-wiki
 
-A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that runs entirely inside your browser.
+A personal wiki engine inspired by MediaWiki that runs entirely inside your browser with no server.
 
-🌐 **Live Demo:** [https://ai-hackathon-only.github.io/pocket-wiki/](https://ai-hackathon-only.github.io/pocket-wiki/)
+**Live Demo:** [https://ai-hackathon-only.github.io/pocket-wiki/](https://ai-hackathon-only.github.io/pocket-wiki/)
 
 ---
 
@@ -10,10 +10,10 @@ A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that 
 
 - **Serverless & Local-First:** All wiki pages, edit histories, and revisions are persisted locally in browser `localStorage`.
 - **MediaWiki-Inspired Wikitext:** Supports headings (`== H2 ==`, `=== H3 ===`), bold (`'''bold'''`), italic (`''italic''`), internal links (`[[Page]]`, `[[Page|display]]`), redlinks for missing pages, external links (`[https://... label]`), and ordered/unordered lists.
-- **Strict Content Security:** Strict Content Security Policy (CSP), zero external CDN requests, zero analytics, and guaranteed HTML escaping on all rendered content.
+- **Strict Content Security:** Strict Content Security Policy (CSP), zero external CDN requests, zero analytics, and HTML escaping on all rendered content.
 - **Revision History:** Full page history tracking with timestamps, edit summaries, and past revision viewing.
 - **Special Pages:** Built-in `Special:AllPages`, `Special:RecentChanges`, `Special:Search` (title and full-text), `Special:Export` (JSON download/copy), and `Special:Import` (with overwrite confirmation).
-- **Instant Portability:** Export your entire wiki database to a single JSON file and import it anywhere.
+- **Export and Import:** Export your entire wiki to a single JSON file and import it into any browser.
 - **Responsive Design System:** Warm editorial typography (Charter/Georgia body, sans headings), single-column reading focus, and mobile parity at 390px viewports (specified in [DESIGN.md](DESIGN.md)).
 
 ---
@@ -24,7 +24,8 @@ A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that 
 index.html       ── Semantic application shell, strict CSP, root mount point
 css/style.css    ── Archival warmth design system (DESIGN.md)
 js/
-  app.js         ── Hash router (#/wiki/, #/edit/, #/history/, #/rev/, #/special/)
+  app.js         ── Hash router (#/wiki/, #/edit/, #/history/, #/diff/, #/rev/, #/special/)
+  diff.js        ── Dependency-free Myers diff between revisions
   storage.js     ── Unified localStorage persistence layer (pocket-wiki:v1)
   wikitext.js    ── XSS-safe wikitext parser & HTML sanitizer
   seed.js        ── Default starter articles (Main Page, Wikitext Guide, etc.)

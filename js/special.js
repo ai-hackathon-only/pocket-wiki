@@ -300,7 +300,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
 
       try {
         store.importAll(parsed);
-        alert(`Successfully imported ${count} page(s)! Redirecting to Main Page.`);
+        alert(`Imported ${count} page(s). Redirecting to Main Page.`);
         location.hash = '#/wiki/Main_Page';
       } catch (err) {
         showError('Import failed: ' + err.message);

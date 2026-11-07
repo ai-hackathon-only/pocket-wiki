@@ -87,7 +87,7 @@ components:
 
 ## Overview
 
-`pocket-wiki` is designed for focused reading and frictionless personal knowledge authoring. Rather than mimicking the utilitarian, multi-column portal structure of Wikipedia (Vector skin), `pocket-wiki` presents an intimate, editorial reading surface inspired by well-crafted pocket field notebooks and literary journals.
+`pocket-wiki` is designed for focused reading and simple personal knowledge authoring. Rather than mimicking the utilitarian, multi-column portal structure of Wikipedia (Vector skin), `pocket-wiki` presents an intimate, editorial reading surface inspired by well-crafted pocket field notebooks and literary journals.
 
 **The Editorial Warmth Rule.** The UI avoids sterile clinical white backgrounds (#ffffff) in favor of warm paper tones (`neutral-bg`: #fcfbf9) with high-contrast, soft-black ink typography (`text-primary`: #1c1c1a) and subtle warm-gray borders (`surface-border`: #e0dcd3).
 
