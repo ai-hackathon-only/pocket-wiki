@@ -80,7 +80,15 @@ function route() {
       queueMicrotask(() => document.getElementById('edit-form')?.addEventListener('submit', e => {
         e.preventDefault();
         const f = new FormData(e.target);
-        store.save(title, f.get('text'), f.get('summary'));
+        try {
+          store.save(title, f.get('text'), f.get('summary'));
+        } catch (err) {
+          const full = err && err.name === 'QuotaExceededError';
+          alert(full
+            ? 'Not saved: browser storage is full. Export the wiki, then delete or shorten pages.'
+            : 'Not saved: ' + (err && err.message || err));
+          return;
+        }
         location.hash = pageHref(title);
       }));
     }

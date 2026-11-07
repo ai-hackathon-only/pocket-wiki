@@ -7,3 +7,6 @@ body { font-family: system-ui, sans-serif; max-width: 60rem; margin: 0 auto; pad
 .wikilink.new { color: #b32424; }
 .edit-form { display: grid; gap: .5rem; }
 .edit-form textarea { font-family: ui-monospace, monospace; width: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+#app { overflow-wrap: anywhere; }
+#app:focus { outline: none; } /* focused by the router after navigation, for screen readers */

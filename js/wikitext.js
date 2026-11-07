@@ -12,25 +12,31 @@ export function pageHref(title) {
   return '#/wiki/' + encodeURIComponent(title.replace(/ /g, '_'));
 }
 
-// Inline markup on a line that is already escaped.
+// Bold then italic ('''x''' before ''x''). Quotes are escaped as &#39;.
+function quotes(s) {
+  s = s.replace(/&#39;&#39;&#39;(.+?)&#39;&#39;&#39;/g, '<b>$1</b>');
+  return s.replace(/&#39;&#39;(.+?)&#39;&#39;/g, '<i>$1</i>');
+}
+
+// Inline markup on a line that is already escaped. Links become placeholders
+// first, so bold/italic never touch an href and never cross a link boundary.
 function inline(s, exists, normalize) {
+  const links = [];
+  const hold = html => '\u0000' + (links.push(html) - 1) + '\u0000';
   // Internal links [[Page]] / [[Page|text]]. Titles were escaped, so unescape for the href.
   s = s.replace(/\[\[([^\[\]|]+)(?:\|([^\[\]]*))?\]\]/g, (m, target, label) => {
-    const raw = unescapeHtml(target);
-    const title = normalize(raw);
+    const title = normalize(unescapeHtml(target));
     if (!title) return m;
-    const text = label !== undefined && label !== '' ? label : target.trim();
+    const text = label !== undefined && label !== '' ? quotes(label) : target.trim();
     const cls = exists(title) ? 'wikilink' : 'wikilink new';
     const tip = exists(title) ? title : title + ' (page does not exist)';
-    return `<a class="${cls}" href="${pageHref(title)}" title="${escapeHtml(tip)}">${text}</a>`;
+    return hold(`<a class="${cls}" href="${pageHref(title)}" title="${escapeHtml(tip)}">${text}</a>`);
   });
   // External links [https://example.org text]; only http(s).
   s = s.replace(/\[(https?:\/\/[^\s\]]+)(?:\s+([^\]]+))?\]/g, (m, url, label) =>
-    `<a class="external" href="${url}" rel="noopener noreferrer" target="_blank">${label || url}</a>`);
-  // Bold then italic ('''x''' before ''x''). Quotes are escaped as &#39;.
-  s = s.replace(/&#39;&#39;&#39;(.+?)&#39;&#39;&#39;/g, '<b>$1</b>');
-  s = s.replace(/&#39;&#39;(.+?)&#39;&#39;/g, '<i>$1</i>');
-  return s;
+    hold(`<a class="external" href="${url}" rel="noopener noreferrer" target="_blank">${label ? quotes(label) : url}</a>`));
+  s = s.split(/(\u0000\d+\u0000)/).map((part, i) => (i % 2 ? part : quotes(part))).join('');
+  return s.replace(/\u0000(\d+)\u0000/g, (m, n) => links[n]);
 }
 
 function unescapeHtml(s) {
@@ -42,7 +48,7 @@ function slug(text) {
 }
 
 export function render(text, { exists = () => true, normalize = t => t.trim() } = {}) {
-  const lines = escapeHtml(text).replace(/\r\n?/g, '\n').split('\n');
+  const lines = escapeHtml(String(text).replace(/\u0000/g, '')).replace(/\r\n?/g, '\n').split('\n');
   const out = [];
   let para = [];
   let lists = []; // stack of 'ul' | 'ol'
@@ -71,7 +77,7 @@ export function render(text, { exists = () => true, normalize = t => t.trim() } 
       closePara(); setLists([]);
       const level = h[1].length;
       const body = inline(h[2], exists, normalize);
-      out.push(`<h${level} id="${escapeHtml(slug(body))}">${body}</h${level}>`);
+      out.push(`<h${level} id="h-${escapeHtml(slug(body))}">${body}</h${level}>`);
     } else if (li) {
       closePara();
       setLists([...li[1]].map(c => (c === '*' ? 'ul' : 'ol')));
