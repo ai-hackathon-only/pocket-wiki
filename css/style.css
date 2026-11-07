@@ -182,6 +182,12 @@ a.wikilink.new:hover {
   flex: 1;
 }
 
+/* #app gets focus after each route change so screen readers start at the
+   content; it is not a control, so no visible ring. */
+#app:focus {
+  outline: none;
+}
+
 /* Typography Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
@@ -254,6 +260,11 @@ p {
 /* Wiki Content Render */
 .wiki-content {
   margin-bottom: var(--space-xl);
+}
+
+/* Keep prose lines near 70 characters (DESIGN.md: comfortable reading). */
+.wiki-content p, .wiki-content ul, .wiki-content ol {
+  max-width: 70ch;
 }
 
 .wiki-content ul, .wiki-content ol {
