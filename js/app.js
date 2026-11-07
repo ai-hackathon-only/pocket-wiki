@@ -15,19 +15,66 @@ const safeDecode = s => { try { return decodeURIComponent(s || ''); } catch { re
 const titleFromPath = p => store.normalizeTitle(safeDecode(p));
 const tabs = (title, active) => `
   <nav class="page-tabs" aria-label="Page">
-    ${[['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History']].map(([k, label]) =>
+    ${[['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History'], ['rename', 'Rename'], ['delete', 'Delete']].map(([k, label]) =>
       `<a href="#/${k}/${encodeURIComponent(title.replace(/ /g, '_'))}"${k === active ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
   </nav>`;
 
-function viewPage(title) {
-  const rev = store.load(title);
+const enc = title => encodeURIComponent(title.replace(/ /g, '_'));
+
+// Follows one redirect hop ("#REDIRECT [[Target]]"); '#/wiki/Old/noredirect' shows the redirect page itself.
+function viewPage(title, noRedirect) {
+  let rev = store.load(title);
+  let from = null;
+  const target = rev && !noRedirect && store.redirectTarget(rev.text);
+  if (target && target !== title) {
+    from = title;
+    title = target;
+    rev = store.load(title);
+  }
+  const fromNote = from
+    ? `<p class="redirect-note">Redirected from <a href="#/wiki/${enc(from)}/noredirect">${escapeHtml(from)}</a>.</p>` : '';
   if (!rev) {
-    return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}
+    return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}${fromNote}
       <p class="notice">This page does not exist yet. <a href="#/edit/${encodeURIComponent(title.replace(/ /g, '_'))}">Create it</a>.</p>`;
   }
-  return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}
+  return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}${fromNote}
     <article class="wiki-content">${renderText(rev.text)}</article>
     <p class="page-meta">Last edited ${escapeHtml(fmtTime(rev.ts))}.</p>`;
+}
+
+function renamePage(title) {
+  if (!store.exists(title)) {
+    return `<h1>Rename ${escapeHtml(title)}</h1>${tabs(title, 'rename')}<p class="notice">This page does not exist, so there is nothing to rename.</p>`;
+  }
+  return `<h1>Rename ${escapeHtml(title)}</h1>${tabs(title, 'rename')}
+    <form class="edit-form" id="rename-form">
+      <p>The page keeps its full history under the new title.</p>
+      <label for="rename-to">New title</label>
+      <input id="rename-to" name="to" type="text" maxlength="200" value="${escapeHtml(title)}" required>
+      <label for="rename-summary">Reason</label>
+      <input id="rename-summary" name="summary" type="text" maxlength="200" placeholder="Why rename this page?">
+      <label class="check"><input type="checkbox" name="redirect" checked> Leave a redirect at the old title, so links to it keep working. Without it, those links turn red.</label>
+      <p class="notice" id="rename-error" role="alert" hidden></p>
+      <div class="edit-actions">
+        <button type="submit">Rename page</button>
+        <a href="${pageHref(title)}">Cancel</a>
+      </div>
+    </form>`;
+}
+
+function deletePage(title) {
+  if (!store.exists(title)) {
+    return `<h1>Delete ${escapeHtml(title)}</h1>${tabs(title, 'delete')}<p class="notice">This page does not exist, so there is nothing to delete.</p>`;
+  }
+  const n = store.history(title).length;
+  return `<h1>Delete ${escapeHtml(title)}</h1>${tabs(title, 'delete')}
+    <form class="edit-form" id="delete-form">
+      <p>This removes the page and its history (${n} revision${n === 1 ? '' : 's'}) from this browser. Links to it will turn red. It cannot be undone, so export the wiki first if you may want it back.</p>
+      <div class="edit-actions">
+        <button type="submit">Delete page</button>
+        <a href="${pageHref(title)}">Cancel</a>
+      </div>
+    </form>`;
 }
 
 function editPage(title) {
@@ -173,7 +220,9 @@ function route() {
       : kind === 'history' ? historyPage(title)
       : kind === 'rev' ? revisionPage(title, b)
       : kind === 'diff' ? diffPage(title, b, c)
-      : viewPage(title);
+      : kind === 'rename' ? renamePage(title)
+      : kind === 'delete' ? deletePage(title)
+      : viewPage(title, b === 'noredirect');
     if (kind === 'edit') {
       queueMicrotask(() => document.getElementById('edit-form')?.addEventListener('submit', e => {
         e.preventDefault();
@@ -188,6 +237,28 @@ function route() {
           return;
         }
         location.hash = pageHref(title);
+      }));
+    } else if (kind === 'rename') {
+      queueMicrotask(() => document.getElementById('rename-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const f = new FormData(e.target);
+        const out = document.getElementById('rename-error');
+        try {
+          const to = store.rename(title, f.get('to'), f.get('summary').trim(), f.get('redirect') === 'on');
+          location.hash = pageHref(to);
+        } catch (err) {
+          out.textContent = err && err.name === 'QuotaExceededError'
+            ? 'Not renamed: browser storage is full. Export the wiki, then delete or shorten pages.'
+            : 'Not renamed: ' + (err && err.message || err);
+          out.hidden = false;
+          out.focus?.();
+        }
+      }));
+    } else if (kind === 'delete') {
+      queueMicrotask(() => document.getElementById('delete-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        store.remove(title);
+        location.hash = '#/special/AllPages';
       }));
     } else if (kind === 'history') {
       queueMicrotask(() => document.getElementById('history-form')?.addEventListener('submit', e => {
