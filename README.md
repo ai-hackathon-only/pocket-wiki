@@ -49,7 +49,7 @@ Open `http://localhost:8000` in any modern web browser.
 
 ### Offline and install
 
-After the first visit, a service worker (`sw.js`) keeps a copy of the app files, so pocket-wiki opens with no network. `manifest.webmanifest` lets browsers install it as an app. When you change any file listed in `sw.js`, bump `CACHE` in `sw.js` (for example `pocket-wiki-v2`), or returning visitors keep the old copy.
+After the first visit, a service worker (`sw.js`) keeps a copy of the app files, so pocket-wiki opens with no network. `manifest.webmanifest` lets browsers install it as an app. It asks the network first and uses the cached copy only when offline, so a new deploy shows on the next load without bumping a version. Add a new file to `FILES` in `sw.js` only if the app needs it on the very first offline load.
 
 ---
 
