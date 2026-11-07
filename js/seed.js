@@ -19,6 +19,19 @@ To discover how pocket-wiki works, explore these starter articles:
 * [[Architecture]] — How the hash router, storage module, and renderer function together.
 * [[Nonexistent Page]] — An example of a wiki redlink that prompts you to create a new page.
 
+=== Popular Articles ===
+Read 10 starter articles on recent events, science, and technology:
+* [[James Webb Space Telescope]] — Infrared astronomy at the Sun-Earth L2 Lagrange point.
+* [[Artemis Program]] — Lunar exploration and crewed flight sequence.
+* [[Renewable Energy Transition]] — Solar, wind, and grid storage technologies.
+* [[Electric Vehicles]] — Battery systems and charging infrastructure.
+* [[Large Language Models]] — Neural architectures and natural language processing.
+* [[Quantum Computing]] — Qubits, superposition, and experimental platforms.
+* [[2024 Summer Olympics]] — Venues, events, and athletics in Paris.
+* [[Exoplanet Exploration]] — Transit methods and atmospheric characterization.
+* [[Voyager Interstellar Mission]] — Twin probes crossing into interstellar space.
+* [[Global Chip Manufacturing]] — Silicon fabrication and semiconductor supply chains.
+
 === Built by AI Agents ===
 pocket-wiki was collaboratively designed, specified, and coded by autonomous AI agents (Claude Code and Antigravity agy) during a public AI hackathon. Learn more at [https://github.com/ai-hackathon-only/pocket-wiki the GitHub repository].`,
 
@@ -77,7 +90,117 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 ** \`#/diff/:title/:oldId...:newId\` — Line diff between two revisions
 ** \`#/rev/:title/:id\` — Old revision view
 ** \`#/special/:name\` — Modular special pages
-* '''\`js/special.js\`''': Extensible registry powering [[Special:AllPages]], [[Special:RecentChanges]], [[Special:Search]], [[Special:Export]], and [[Special:Import]].`
+* '''\`js/special.js\`''': Extensible registry powering [[Special:AllPages]], [[Special:RecentChanges]], [[Special:Search]], [[Special:Export]], and [[Special:Import]].`,
+
+  'James Webb Space Telescope': `== James Webb Space Telescope ==
+The '''James Webb Space Telescope''' (JWST) is an infrared space observatory launched in December 2021. Built by NASA with the European Space Agency and the Canadian Space Agency, it orbits the Sun-Earth L2 Lagrange point 1.5 million kilometres from Earth.
+
+=== Mission Goals ===
+* Study early stars and galaxies formed after the Big Bang.
+* Observe star birth inside dust clouds.
+* Measure atmospheric chemicals of [[Exoplanet Exploration|exoplanets]].
+
+=== Instruments ===
+JWST carries a 6.5-metre gold-coated beryllium mirror with four instruments: NIRCam, NIRSpec, MIRI, and FGS/NIRISS. A five-layer sunshield keeps optical sensors below 50 Kelvin.`,
+
+  'Artemis Program': `== Artemis Program ==
+The '''Artemis Program''' is a crewed lunar exploration program led by NASA with international partners. Its goal is landing humans on the Moon and preparing for long-term space exploration.
+
+=== Core Systems ===
+* '''Space Launch System (SLS):''' Heavy-lift rocket providing lunar injection capability.
+* '''Orion Spacecraft:''' Crew vehicle designed for lunar transit and high-speed Earth re-entry.
+* '''Gateway:''' Planned space station in lunar orbit for staging and research.
+
+=== Flights ===
+# Artemis I (2022): Uncrewed flight orbiting the Moon and returning to Earth.
+# Artemis II: Crewed flight taking four astronauts around the Moon.
+# Artemis III: Planned crewed landing near the lunar south pole.`,
+
+  'Renewable Energy Transition': `== Renewable Energy Transition ==
+The '''renewable energy transition''' is the global shift from fossil fuels toward low-carbon sources such as solar photovoltaics, wind power, and battery storage.
+
+=== Main Technologies ===
+* '''Solar Photovoltaics:''' Cells converting sunlight directly into electricity.
+* '''Wind Power:''' Turbines supplying power to regional transmission networks.
+* '''Grid Storage:''' Battery facilities and pumped hydro balancing electricity grids.
+* Connected sectors such as [[Electric Vehicles]] support flexible grid demand.`,
+
+  'Electric Vehicles': `== Electric Vehicles ==
+An '''electric vehicle''' (EV) uses electric motors for propulsion, drawing electricity from onboard rechargeable batteries.
+
+=== Core Components ===
+* '''Battery Packs:''' Lithium-ion or lithium iron phosphate cells.
+* '''Inverter and Motor:''' Electronics converting direct current to drive traction motors.
+* '''Regenerative Braking:''' Converting kinetic energy into stored power during deceleration.
+
+=== Infrastructure ===
+Charging corridors provide alternating-current chargers and direct-current fast chargers, linking road travel to the [[Renewable Energy Transition]].`,
+
+  'Large Language Models': `== Large Language Models ==
+A '''large language model''' (LLM) is an artificial intelligence model trained on large text corpora to predict and generate language.
+
+=== Structure ===
+* '''Transformer Architecture:''' Neural networks using self-attention mechanisms to weigh relationships between tokens across context windows.
+* '''Training Stages:''' Pre-training on text followed by instruction tuning and evaluation against safety criteria.
+* Processing speed relies on silicon hardware produced by [[Global Chip Manufacturing]].
+
+=== Uses ===
+* Language translation and summarization
+* Software code assistance
+* Information search and text classification`,
+
+  'Quantum Computing': `== Quantum Computing ==
+'''Quantum computing''' uses quantum mechanics, including superposition and entanglement, to execute specific algorithms faster than classical systems.
+
+=== Fundamentals ===
+* '''Qubit:''' The basic information unit, holding combinations of 0 and 1 states.
+* '''Superposition:''' Mathematical state allowing qubits to explore computational spaces.
+* '''Entanglement:''' Correlated states linking multiple qubits together.
+
+=== Hardware Platforms ===
+Engineers create qubits using superconducting circuits, trapped ions, and neutral atoms fabricated with techniques from [[Global Chip Manufacturing]].`,
+
+  '2024 Summer Olympics': `== 2024 Summer Olympics ==
+The '''2024 Summer Olympics''', officially the Games of the XXXIII Olympiad, took place in Paris, France from 26 July to 11 August 2024.
+
+=== Key Venues ===
+* '''River Seine:''' The opening parade was held on the river instead of an enclosed stadium.
+* '''City Landmarks:''' Beach volleyball stood beneath the Eiffel Tower, while skateboarding and 3x3 basketball used Place de la Concorde.
+* '''New Events:''' Breaking debuted alongside surfing in Tahiti and sport climbing in Le Bourget.
+
+=== Participation ===
+Over 10,500 athletes from 206 National Olympic Committees contested 329 events across 32 sports.`,
+
+  'Exoplanet Exploration': `== Exoplanet Exploration ==
+'''Exoplanet exploration''' studies planets that orbit stars beyond our Solar System. Astronomers have confirmed more than 5,500 exoplanets since 1995.
+
+=== Search Methods ===
+* '''Transit Method:''' Detecting slight dips in star brightness when a planet passes in front.
+* '''Radial Velocity:''' Measuring stellar wobble caused by gravitational interaction.
+* '''Direct Imaging:''' Masking host starlight to record images of distant gas giants.
+
+Space observatories, including the [[James Webb Space Telescope]], examine starlight filtered through exoplanet atmospheres to detect water vapour and methane.`,
+
+  'Voyager Interstellar Mission': `== Voyager Interstellar Mission ==
+The '''Voyager Interstellar Mission''' continues the flight of NASA twin spacecraft Voyager 1 and Voyager 2, launched in 1977.
+
+=== Boundary Crossings ===
+* '''Voyager 1''' crossed the heliopause into interstellar space in August 2012 at 121 astronomical units (AU) from the Sun.
+* '''Voyager 2''' entered interstellar space in November 2018 at 119 AU.
+
+=== Operations ===
+Both spacecraft use radioisotope thermoelectric generators. Instruments transmit measurements of cosmic rays and plasma density to Earth through the Deep Space Network.`,
+
+  'Global Chip Manufacturing': `== Global Chip Manufacturing ==
+'''Global chip manufacturing''' encompasses the facilities, equipment, and supply chains that produce semiconductor integrated circuits.
+
+=== Production Stages ===
+* '''Silicon Ingots:''' Growing high-purity silicon crystals and slicing them into thin wafers.
+* '''Photolithography:''' Exposing photoresist with ultraviolet light to imprint circuit patterns.
+* '''Etch and Deposit:''' Etching microscopic channels and depositing conductive metal layers.
+* '''Packaging:''' Cutting wafers into dies and wiring them into protective enclosures.
+
+High-density chip fabrication produces processors required for [[Large Language Models]] and experimental [[Quantum Computing]].`
 };
 
 export function seedIfEmpty(store) {
@@ -89,6 +212,20 @@ export function seedIfEmpty(store) {
           const oldRev = store.load('Local Sovereignty');
           if (oldRev) {
             store.save('Your Pages Stay in This Browser', oldRev.text, 'Update seed title for existing visitors');
+          }
+        }
+      }
+      if (typeof localStorage !== 'undefined' && !localStorage.getItem('pocket_wiki_seed_articles_v1')) {
+        localStorage.setItem('pocket_wiki_seed_articles_v1', '1');
+        for (const [title, text] of Object.entries(SEED_PAGES)) {
+          if (typeof store.exists === 'function' && !store.exists(title)) {
+            store.save(title, text, 'Seed starter article');
+          }
+        }
+        if (typeof store.load === 'function' && store.exists('Main Page')) {
+          const mainRev = store.load('Main Page');
+          if (mainRev && !mainRev.text.includes('=== Popular Articles ===')) {
+            store.save('Main Page', SEED_PAGES['Main Page'], 'Add popular articles to Main Page');
           }
         }
       }
