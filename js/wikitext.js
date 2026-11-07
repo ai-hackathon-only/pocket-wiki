@@ -18,16 +18,36 @@ function quotes(s) {
   return s.replace(/&#39;&#39;(.+?)&#39;&#39;/g, '<i>$1</i>');
 }
 
+// Extract category names from raw text: [[Category:Name]] (excluding inline [[:Category:Name]]).
+export function parseCategories(text) {
+  const cats = [];
+  const seen = new Set();
+  const re = /\[\[(?!\s*:)Category:\s*([^\[\]|]+?)\s*(?:\|[^\[\]]*)?\]\]/gi;
+  let m;
+  while ((m = re.exec(String(text || ''))) !== null) {
+    const raw = m[1].trim();
+    const name = raw ? raw[0].toUpperCase() + raw.slice(1) : '';
+    if (name && !seen.has(name.toLowerCase())) {
+      seen.add(name.toLowerCase());
+      cats.push(name);
+    }
+  }
+  return cats;
+}
+
 // Inline markup on a line that is already escaped. Links become placeholders
 // first, so bold/italic never touch an href and never cross a link boundary.
 function inline(s, exists, normalize) {
   const links = [];
   const hold = html => '\u0000' + (links.push(html) - 1) + '\u0000';
-  // Internal links [[Page]] / [[Page|text]]. Titles were escaped, so unescape for the href.
+  // Internal links [[Page]] / [[Page|text]] / [[:Category:X]]. Titles were escaped, so unescape for the href.
   s = s.replace(/\[\[([^\[\]|]+)(?:\|([^\[\]]*))?\]\]/g, (m, target, label) => {
-    const title = normalize(unescapeHtml(target));
+    const rawTarget = unescapeHtml(target);
+    const isColonPrefixed = rawTarget.startsWith(':');
+    const cleanTarget = isColonPrefixed ? rawTarget.slice(1).trim() : rawTarget.trim();
+    const title = normalize(cleanTarget);
     if (!title) return m;
-    const text = label !== undefined && label !== '' ? quotes(label) : target.trim();
+    const text = label !== undefined && label !== '' ? quotes(label) : (isColonPrefixed ? cleanTarget : target.trim());
     const cls = exists(title) ? 'wikilink' : 'wikilink new';
     const tip = exists(title) ? title : title + ' (page does not exist)';
     return hold(`<a class="${cls}" href="${pageHref(title)}" title="${escapeHtml(tip)}">${text}</a>`);
@@ -80,8 +100,22 @@ export function expandTemplates(text, load, normalize = t => t.trim(), seen = []
 }
 
 export function render(text, { exists = () => true, normalize = t => t.trim(), load = null } = {}) {
-  if (load) text = expandTemplates(text, load, normalize);
-  const lines = escapeHtml(String(text).replace(/\u0000/g, '')).replace(/\r\n?/g, '\n').split('\n');
+  const catRegex = /\[\[(?!\s*:)Category:\s*([^\[\]|]+?)\s*(?:\|[^\[\]]*)?\]\]/gi;
+  const categories = [];
+  const seenCats = new Set();
+  let cleanedText = String(text || '').replace(catRegex, (m, raw) => {
+    const name = raw.trim();
+    const norm = name ? name[0].toUpperCase() + name.slice(1) : '';
+    if (norm && !seenCats.has(norm.toLowerCase())) {
+      seenCats.add(norm.toLowerCase());
+      categories.push(norm);
+    }
+    return '';
+  });
+
+  if (load) cleanedText = expandTemplates(cleanedText, load, normalize);
+
+  const lines = escapeHtml(cleanedText.replace(/\u0000/g, '')).replace(/\r\n?/g, '\n').split('\n');
   const out = [];
   let para = [];
   let lists = []; // stack of 'ul' | 'ol'
@@ -165,5 +199,15 @@ export function render(text, { exists = () => true, normalize = t => t.trim(), l
     }
   }
   closeTable(); closePara(); setLists([]);
+
+  if (categories.length) {
+    const catItems = categories.map(cat => {
+      const catTitle = 'Category:' + cat;
+      const cls = exists(catTitle) ? 'wikilink' : 'wikilink new';
+      const tip = exists(catTitle) ? catTitle : catTitle + ' (page does not exist)';
+      return `<li><a class="${cls}" href="${pageHref(catTitle)}" title="${escapeHtml(tip)}">${escapeHtml(cat)}</a></li>`;
+    }).join('');
+    out.push(`<nav class="catlinks" aria-label="Categories"><span class="catlinks-label">Categories:</span><ul class="catlinks-list">${catItems}</ul></nav>`);
+  }
   return out.join('\n');
 }

@@ -77,6 +77,10 @@ export function normalizeTitle(title) {
     const sub = t.slice(5).trim();
     return 'Talk:' + (sub ? sub[0].toUpperCase() + sub.slice(1) : '');
   }
+  if (t.toLowerCase().startsWith('category:')) {
+    const sub = t.slice(9).trim();
+    return 'Category:' + (sub ? sub[0].toUpperCase() + sub.slice(1) : '');
+  }
   return t[0].toUpperCase() + t.slice(1);
 }
 
@@ -177,6 +181,61 @@ export function redirectTarget(text) {
 // All page titles, sorted.
 export function list() {
   return Object.keys(read().pages).sort((a, b) => a.localeCompare(b));
+}
+
+// Pages belonging to a category, sorted.
+export function getCategoryMembers(categoryName) {
+  const normCat = normalizeTitle(categoryName.startsWith('Category:') ? categoryName : 'Category:' + categoryName);
+  const catShortName = normCat.slice(9).toLowerCase();
+  if (!catShortName) return [];
+  const pages = read().pages;
+  const members = [];
+  const re = /\[\[(?!\s*:)Category:\s*([^\[\]|]+?)\s*(?:\|[^\[\]]*)?\]\]/gi;
+  for (const [title, page] of Object.entries(pages)) {
+    const lastRev = page.revisions[page.revisions.length - 1];
+    if (!lastRev || !lastRev.text) continue;
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(lastRev.text)) !== null) {
+      if (m[1].trim().toLowerCase() === catShortName) {
+        members.push(title);
+        break;
+      }
+    }
+  }
+  return members.sort((a, b) => a.localeCompare(b));
+}
+
+// All categories with their member counts, sorted by name.
+export function getAllCategories() {
+  const pages = read().pages;
+  const catMap = new Map();
+  for (const title of Object.keys(pages)) {
+    if (title.startsWith('Category:')) {
+      const sub = title.slice(9).trim();
+      const norm = sub ? sub[0].toUpperCase() + sub.slice(1) : '';
+      if (norm) catMap.set(norm, 0);
+    }
+  }
+  const re = /\[\[(?!\s*:)Category:\s*([^\[\]|]+?)\s*(?:\|[^\[\]]*)?\]\]/gi;
+  for (const page of Object.values(pages)) {
+    const lastRev = page.revisions[page.revisions.length - 1];
+    if (!lastRev || !lastRev.text) continue;
+    re.lastIndex = 0;
+    const seen = new Set();
+    let m;
+    while ((m = re.exec(lastRev.text)) !== null) {
+      const raw = m[1].trim();
+      const norm = raw ? raw[0].toUpperCase() + raw.slice(1) : '';
+      if (norm && !seen.has(norm.toLowerCase())) {
+        seen.add(norm.toLowerCase());
+        catMap.set(norm, (catMap.get(norm) || 0) + 1);
+      }
+    }
+  }
+  return [...catMap.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 // Revisions of one page, newest first.

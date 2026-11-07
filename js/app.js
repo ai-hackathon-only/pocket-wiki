@@ -60,12 +60,38 @@ function viewPage(title, noRedirect) {
   }
   const fromNote = from
     ? `<p class="redirect-note">Redirected from <a href="#/wiki/${enc(from)}/noredirect">${escapeHtml(from)}</a>.</p>` : '';
+
+  const isCategory = title.startsWith('Category:');
+  const catMembers = isCategory ? store.getCategoryMembers(title) : [];
+  let categorySection = '';
+  if (isCategory) {
+    const catName = title.slice(9);
+    const count = catMembers.length;
+    categorySection = `
+      <section class="category-members" aria-label="Pages in category">
+        <h2>Pages in category &ldquo;${escapeHtml(catName)}&rdquo;</h2>
+        ${count === 0
+          ? '<p class="notice">This category currently contains no pages.</p>'
+          : `<p class="category-count">${count === 1 ? 'The following page is in this category:' : `The following ${count} pages are in this category:`}</p>
+             <ul class="category-list">
+               ${catMembers.map(m => `<li><a class="wikilink" href="${pageHref(m)}">${escapeHtml(m)}</a></li>`).join('')}
+             </ul>`
+        }
+      </section>`;
+  }
+
   if (!rev) {
+    if (isCategory) {
+      return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}${fromNote}
+        <p class="notice">This category page does not have a description yet. <a href="#/edit/${encodeURIComponent(title.replace(/ /g, '_'))}">Create it</a>.</p>
+        ${categorySection}`;
+    }
     return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}${fromNote}
       <p class="notice">This page does not exist yet. <a href="#/edit/${encodeURIComponent(title.replace(/ /g, '_'))}">Create it</a>.</p>`;
   }
   return `<h1>${escapeHtml(title)}</h1>${tabs(title, 'wiki')}${fromNote}
     <article class="wiki-content">${renderText(rev.text)}</article>
+    ${categorySection}
     <p class="page-meta">Last edited ${escapeHtml(fmtTime(rev.ts))}.</p>`;
 }
 
