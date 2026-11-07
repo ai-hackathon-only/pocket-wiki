@@ -1433,3 +1433,49 @@ mark {
   padding: var(--space-md);
   margin-bottom: var(--space-lg);
 }
+
+/* Wikitext Tables */
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: var(--space-lg);
+  -webkit-overflow-scrolling: touch;
+}
+
+.wiki-content table,
+table.wikitable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-sm);
+}
+
+.wiki-content caption {
+  font-weight: 600;
+  text-align: left;
+  padding: var(--space-xs) 0 var(--space-sm);
+  caption-side: top;
+  color: var(--color-text-primary);
+  font-family: var(--font-heading);
+}
+
+.wiki-content th,
+.wiki-content td {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-surface-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.wiki-content th {
+  background-color: var(--color-surface-dim);
+  font-weight: 600;
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+}
+
+.wiki-content tr:nth-child(even) td {
+  background-color: var(--color-surface-dim);
+}

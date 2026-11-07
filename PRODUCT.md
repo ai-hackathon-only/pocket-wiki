@@ -33,6 +33,8 @@ Unlike Wikipedia or server-hosted wikis, `pocket-wiki` requires zero server infr
 - **Capabilities:**
   - View, create, and edit pages with mandatory edit summaries.
   - Wikitext rendering: `== H2 ==`, `=== H3 ===`, `'''bold'''`, `''italic''`, `[[Page]]` and `[[Page|label]]` links, `[https://example.org label]` external links, nested `*` / `#` lists, blank line paragraph separation.
+  - Wikitext tables: `{| class="wikitable"`, `|+ caption`, `|- row`, `! header`, `| cell`, and `|}` rendered as semantic, responsive HTML tables.
+  - Simple templates: `{{Name}}` page transclusion (resolving `Template:Name` and `Name`), with cycle detection and recursion depth guard.
   - Page revision history: viewing timestamped revisions with summaries and inspecting past states.
   - Special pages: `Special:AllPages` and `Special:RecentChanges`.
   - Search: title matching and full-text search across all revisions/pages.

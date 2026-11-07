@@ -80,7 +80,26 @@ Ordered numbered lists start with a number sign:
 ## Sub-step
 
 === Paragraphs ===
-Blank lines separate paragraphs. All raw HTML tags like \`<script>\` or \`<div>\` are automatically escaped for safety.`,
+Blank lines separate paragraphs. All raw HTML tags like \`<script>\` or \`<div>\` are automatically escaped for safety.
+
+=== Tables ===
+Create structured tables using standard wikitext table markup:
+{| class="wikitable"
+|+ Wikitext Feature Overview
+|-
+! Syntax !! Result
+|-
+| \`{{Name}}\` || Transcludes another page or template
+|-
+| \`{| ... |}\` || Renders a formatted data table
+|}
+
+=== Templates ===
+Transclude another page or template into your article using \`{{Name}}\`:
+* \`{{Note}}\` looks for [[Template:Note]] first, or page [[Note]].
+* Template loops are automatically prevented.
+Here is an inclusion of [[Template:Note]]:
+{{Template:Note}}`,
 
   'Your Pages Stay in This Browser': `== Your Pages Stay in This Browser ==
 pocket-wiki stores all page revisions directly inside your browser's \`localStorage\`.
@@ -106,6 +125,12 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 ** \`#/rev/:title/:id\` — Old revision view
 ** \`#/special/:name\` — Modular special pages
 * '''\`js/special.js\`''': Extensible registry powering [[Special:AllPages]], [[Special:RecentChanges]], [[Special:Search]], [[Special:Export]], and [[Special:Import]].`,
+
+  'Template:Note': `{| class="wikitable"
+! Template Notice
+|-
+| This note is transcluded from [[Template:Note]]. You can edit this template to update everywhere it is included.
+|}`,
 
   'James Webb Space Telescope': `== James Webb Space Telescope ==
 The '''James Webb Space Telescope''' (JWST) is the largest space telescope ever built. Launched on Christmas Day in December 2021, it orbits the Sun about 1.5 million kilometres (one million miles) away from Earth.

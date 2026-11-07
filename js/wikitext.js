@@ -47,11 +47,46 @@ function slug(text) {
   return text.replace(/<[^>]*>/g, '').trim().replace(/\s+/g, '_');
 }
 
-export function render(text, { exists = () => true, normalize = t => t.trim() } = {}) {
-  const lines = escapeHtml(String(text).replace(/\u0000/g, '')).replace(/\r\n?/g, '\n').split('\n');
+function expandTemplates(text, resolveTemplate, normalize, seen = new Set(), depth = 0) {
+  if (!resolveTemplate || depth >= 5) return text;
+  return text.replace(/\{\{([^{}\n]+)\}\}/g, (match, rawName) => {
+    const name = rawName.trim();
+    if (!name) return match;
+    const norm = normalize ? normalize(name) : name;
+    if (seen.has(norm)) {
+      return `[Template loop: ${norm}]`;
+    }
+    const templateContent = resolveTemplate(norm);
+    if (templateContent === null || templateContent === undefined) {
+      return match;
+    }
+    const nextSeen = new Set(seen);
+    nextSeen.add(norm);
+    return expandTemplates(templateContent, resolveTemplate, normalize, nextSeen, depth + 1);
+  });
+}
+
+function cleanCell(raw) {
+  let text = raw.trim();
+  const pipePos = text.indexOf('|');
+  if (pipePos > 0 && !text.startsWith('[[') && (text.slice(0, pipePos).includes('=') || /^(class|style|scope|width|colspan|rowspan)\b/i.test(text.slice(0, pipePos)))) {
+    text = text.slice(pipePos + 1).trim();
+  }
+  return text;
+}
+
+export function render(text, { exists = () => true, normalize = t => t.trim(), resolveTemplate } = {}) {
+  const expanded = expandTemplates(String(text).replace(/\u0000/g, ''), resolveTemplate, normalize);
+  const lines = escapeHtml(expanded).replace(/\r\n?/g, '\n').split('\n');
   const out = [];
   let para = [];
   let lists = []; // stack of 'ul' | 'ol'
+  let inTable = false;
+  let tableRows = [];
+  let tableCaption = null;
+  let tableClass = 'wikitable';
+  let curRow = null;
+  let curCell = null;
 
   const closePara = () => {
     if (para.length) out.push('<p>' + para.join(' ') + '</p>');
@@ -70,7 +105,123 @@ export function render(text, { exists = () => true, normalize = t => t.trim() } 
     }
   };
 
+  const closeTableCell = () => {
+    if (curCell && curRow) {
+      curRow.push(curCell);
+      curCell = null;
+    }
+  };
+
+  const closeTableRow = () => {
+    closeTableCell();
+    if (curRow && curRow.length) {
+      tableRows.push(curRow);
+    }
+    curRow = null;
+  };
+
+  const closeTable = () => {
+    if (!inTable) return;
+    closeTableRow();
+    let html = `<div class="table-wrapper"><table class="${escapeHtml(tableClass)}">`;
+    if (tableCaption) {
+      html += `<caption>${tableCaption}</caption>`;
+    }
+    if (tableRows.length) {
+      const hasOnlyHeaders = tableRows[0].every(c => c.isHeader);
+      let startIdx = 0;
+      if (hasOnlyHeaders) {
+        html += '<thead><tr>';
+        for (const c of tableRows[0]) {
+          html += `<th>${c.content}</th>`;
+        }
+        html += '</tr></thead>';
+        startIdx = 1;
+      }
+      if (startIdx < tableRows.length) {
+        html += '<tbody>';
+        for (let i = startIdx; i < tableRows.length; i++) {
+          html += '<tr>';
+          for (const c of tableRows[i]) {
+            const tag = c.isHeader ? 'th' : 'td';
+            html += `<${tag}>${c.content}</${tag}>`;
+          }
+          html += '</tr>';
+        }
+        html += '</tbody>';
+      }
+    }
+    html += '</table></div>';
+    out.push(html);
+    inTable = false;
+    tableRows = [];
+    tableCaption = null;
+    tableClass = 'wikitable';
+  };
+
   for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('{|')) {
+      closePara(); setLists([]);
+      if (inTable) closeTable();
+      inTable = true;
+      tableCaption = null;
+      tableRows = [];
+      curRow = null;
+      curCell = null;
+      const attr = trimmed.slice(2).trim();
+      const classMatch = attr.match(/class=(?:&quot;|["'])(.*?)(?:&quot;|["'])/) || attr.match(/class=([^\s]+)/);
+      tableClass = classMatch && classMatch[1] ? classMatch[1] : 'wikitable';
+      continue;
+    }
+
+    if (inTable) {
+      if (trimmed.startsWith('|}')) {
+        closeTable();
+        continue;
+      }
+      if (trimmed.startsWith('|+')) {
+        closeTableCell();
+        tableCaption = inline(trimmed.slice(2).trim(), exists, normalize);
+        continue;
+      }
+      if (trimmed.startsWith('|-')) {
+        closeTableRow();
+        curRow = [];
+        continue;
+      }
+      if (trimmed.startsWith('!')) {
+        if (!curRow) curRow = [];
+        closeTableCell();
+        const parts = trimmed.slice(1).split('!!');
+        for (let i = 0; i < parts.length - 1; i++) {
+          curRow.push({ isHeader: true, content: inline(cleanCell(parts[i]), exists, normalize) });
+        }
+        curCell = { isHeader: true, content: inline(cleanCell(parts[parts.length - 1]), exists, normalize) };
+        continue;
+      }
+      if (trimmed.startsWith('|')) {
+        if (!curRow) curRow = [];
+        closeTableCell();
+        const parts = trimmed.slice(1).split('||');
+        for (let i = 0; i < parts.length - 1; i++) {
+          curRow.push({ isHeader: false, content: inline(cleanCell(parts[i]), exists, normalize) });
+        }
+        curCell = { isHeader: false, content: inline(cleanCell(parts[parts.length - 1]), exists, normalize) };
+        continue;
+      }
+      if (curCell) {
+        if (trimmed === '') {
+          curCell.content += '<br>';
+        } else {
+          curCell.content += (curCell.content ? ' ' : '') + inline(trimmed, exists, normalize);
+        }
+        continue;
+      }
+      if (trimmed === '') continue;
+    }
+
     const h = line.match(/^(={2,6})\s*(.+?)\s*\1\s*$/);
     const li = line.match(/^([*#]+)\s*(.*)$/);
     if (h) {
@@ -90,5 +241,6 @@ export function render(text, { exists = () => true, normalize = t => t.trim() } 
     }
   }
   closePara(); setLists([]);
+  if (inTable) closeTable();
   return out.join('\n');
 }
