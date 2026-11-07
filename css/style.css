@@ -1491,6 +1491,8 @@ mark {
 .wikitable th {
   background: var(--color-surface-dim);
   font-weight: 600;
+}
+
 /* Special:WhatLinksHere */
 .whatlinkshere-form {
   background: var(--color-surface);
@@ -1538,4 +1540,74 @@ mark {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
   font-style: italic;
+}
+
+/* Categories bar and member listing */
+.catlinks {
+  margin-top: var(--space-xl);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.catlinks-label {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.catlinks-list {
+  display: inline-flex;
+  gap: var(--space-xs) var(--space-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.catlinks-list li {
+  display: inline;
+}
+
+.catlinks-list li + li::before {
+  content: '·';
+  margin-right: var(--space-sm);
+  color: var(--color-text-secondary);
+}
+
+.category-members {
+  margin-top: var(--space-xl);
+  border-top: 1px solid var(--color-surface-border);
+  padding-top: var(--space-md);
+}
+
+.category-members h2 {
+  font-size: 1.25rem;
+  margin-bottom: var(--space-xs);
+}
+
+.category-count {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.category-list {
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.category-list li {
+  margin-bottom: var(--space-xs);
+}
+
+.category-member-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
 }

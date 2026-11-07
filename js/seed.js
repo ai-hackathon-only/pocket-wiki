@@ -100,7 +100,13 @@ A table starts with a line \`{|\` and ends with \`|}\`. \`|+\` adds a caption, \
 === Templates ===
 A page name inside double curly braces includes that page from the Template namespace. Writing Note inside double curly braces includes [[Template:Note]], like this:
 {{Note}}
-Put a colon before the name to include a normal page instead. A template that does not exist shows as a red link.`,
+Put a colon before the name to include a normal page instead. A template that does not exist shows as a red link.
+
+=== Categories ===
+Add \`[[Category:Name]]\` to any page to tag it into that category. Categories appear in a category bar at the bottom of the page.
+To link to a category without tagging the page, prefix the category with a colon: \`[[:Category:Name]]\`.
+
+[[Category:Documentation]]`,
 
   'Template:Note': `'''Note:''' this box comes from [[Template:Note]]. Edit that page and every page that uses it changes.`,
 
@@ -111,7 +117,9 @@ pocket-wiki stores all page revisions directly inside your browser's \`localStor
 * '''No Server:''' There is no backend server receiving or tracking your notes.
 * '''Offline Availability:''' The application runs locally once loaded, even without an active internet connection.
 * '''Export Often:''' Because data lives in browser storage, clearing website cookies or site data removes your pages. Use [[Special:Export]] regularly to save JSON backups to your computer.
-* '''Single-File Portability:''' You can import any saved JSON export back into any browser using [[Special:Import]].`,
+* '''Single-File Portability:''' You can import any saved JSON export back into any browser using [[Special:Import]].
+
+[[Category:Documentation]]`,
 
   'Architecture': `== Architecture ==
 pocket-wiki is designed around small, single-purpose ES modules following clean web standards:
@@ -127,7 +135,9 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 ** \`#/diff/:title/:oldId...:newId\` — Line diff between two revisions
 ** \`#/rev/:title/:id\` — Old revision view
 ** \`#/special/:name\` — Modular special pages
-* '''\`js/special.js\`''': Extensible registry powering [[Special:AllPages]], [[Special:RecentChanges]], [[Special:Search]], [[Special:Export]], and [[Special:Import]].`,
+* '''\`js/special.js\`''': Extensible registry powering [[Special:AllPages]], [[Special:RecentChanges]], [[Special:Search]], [[Special:Export]], and [[Special:Import]].
+
+[[Category:Documentation]]`,
 
   'James Webb Space Telescope': `== James Webb Space Telescope ==
 The '''James Webb Space Telescope''' (JWST) is the largest space telescope ever built. Launched on Christmas Day in December 2021, it orbits the Sun about 1.5 million kilometres (one million miles) away from Earth.
@@ -136,7 +146,9 @@ The '''James Webb Space Telescope''' (JWST) is the largest space telescope ever 
 JWST sees infrared light, which human eyes cannot see. This lets the telescope peer through thick cosmic dust clouds to watch stars form and look back billions of years to see the first galaxies. It also analyzes the atmospheres of [[Exoplanet Exploration|planets orbiting other stars]] to check for gases like water vapour and carbon dioxide.
 
 === Golden Mirrors and Sunshield ===
-The telescope uses a giant primary mirror made of 18 gold-plated hexagonal pieces that unfolded like origami in space. A five-layer tennis-court-sized sunshield blocks heat from the Sun, Moon, and Earth so its cameras stay at minus 233 degrees Celsius (minus 388 degrees Fahrenheit).`,
+The telescope uses a giant primary mirror made of 18 gold-plated hexagonal pieces that unfolded like origami in space. A five-layer tennis-court-sized sunshield blocks heat from the Sun, Moon, and Earth so its cameras stay at minus 233 degrees Celsius (minus 388 degrees Fahrenheit).
+
+[[Category:Space]] [[Category:Astronomy]]`,
 
   'Artemis Program': `== Artemis Program ==
 The '''Artemis Program''' is an international space effort led by NASA to send astronauts back to the Moon and establish a long-term human presence there.
@@ -147,7 +159,9 @@ The '''Artemis Program''' is an international space effort led by NASA to send a
 # '''Artemis III:''' Aims to land astronauts, including the first woman and first person of colour, near the lunar south pole.
 
 === How It Works ===
-Astronauts ride inside the Orion capsule on top of the giant Space Launch System (SLS) rocket. Future missions will dock with a small planned space station called Gateway orbiting the Moon.`,
+Astronauts ride inside the Orion capsule on top of the giant Space Launch System (SLS) rocket. Future missions will dock with a small planned space station called Gateway orbiting the Moon.
+
+[[Category:Space]]`,
 
   'Renewable Energy Transition': `== Renewable Energy Transition ==
 The '''renewable energy transition''' is the global move away from burning fossil fuels like coal, oil, and gas toward cleaner energy sources that do not produce greenhouse gases.
@@ -158,7 +172,9 @@ The '''renewable energy transition''' is the global move away from burning fossi
 * '''Hydro and Geothermal:''' Water dams and underground Earth heat provide steady power around the clock.
 
 === Storing Energy ===
-Because the sun sets and the wind changes, modern electric grids use large batteries and pumped-water reservoirs to store excess power for when people need it most. Clean electricity also powers everyday transport through [[Electric Vehicles]].`,
+Because the sun sets and the wind changes, modern electric grids use large batteries and pumped-water reservoirs to store excess power for when people need it most. Clean electricity also powers everyday transport through [[Electric Vehicles]].
+
+[[Category:Technology]]`,
 
   'Electric Vehicles': `== Electric Vehicles ==
 An '''electric vehicle''' (EV) runs on electricity stored in rechargeable battery packs instead of burning petrol or diesel in an internal combustion engine.
@@ -169,7 +185,9 @@ An '''electric vehicle''' (EV) runs on electricity stored in rechargeable batter
 * '''Regenerative Braking:''' When the driver lifts off the accelerator, the motor reverses into a generator, slowing the car down and putting power back into the battery.
 
 === Charging ===
-Drivers charge at home from normal wall sockets or at fast roadside charging stations while travelling. When plugged into electricity from the [[Renewable Energy Transition]], driving produces zero tailpipe emissions.`,
+Drivers charge at home from normal wall sockets or at fast roadside charging stations while travelling. When plugged into electricity from the [[Renewable Energy Transition]], driving produces zero tailpipe emissions.
+
+[[Category:Technology]]`,
 
   'Large Language Models': `== Large Language Models ==
 A '''large language model''' (LLM) is a computer program trained on billions of pages of writing to understand and generate human language.
@@ -183,7 +201,9 @@ Instead of memorizing sentences, the model learns mathematical patterns between 
 * Writing and reviewing computer code
 * Summarizing long documents and letters
 
-Running these models takes massive computing power provided by thousands of chips built through [[Global Chip Manufacturing]].`,
+Running these models takes massive computing power provided by thousands of chips built through [[Global Chip Manufacturing]].
+
+[[Category:Technology]] [[Category:Computer Science]]`,
 
   'Quantum Computing': `== Quantum Computing ==
 '''Quantum computing''' is a new way of calculating that uses principles from quantum physics to solve specific problems that regular computers would take centuries to crack.
@@ -192,7 +212,9 @@ Running these models takes massive computing power provided by thousands of chip
 Regular computers store information in bits that are strictly 0 or 1, like tiny light switches. A quantum computer uses quantum bits, or '''qubits'''. Thanks to a physical property called superposition, a qubit can hold a weighted mix of 0 and 1 until measured.
 
 === Why It Matters ===
-Working with qubits lets a quantum computer test millions of possible combinations simultaneously. Scientists hope to use them to invent new medicines, design better batteries, and improve cryptography.`,
+Working with qubits lets a quantum computer test millions of possible combinations simultaneously. Scientists hope to use them to invent new medicines, design better batteries, and improve cryptography.
+
+[[Category:Technology]] [[Category:Computer Science]]`,
 
   '2024 Summer Olympics': `== 2024 Summer Olympics ==
 The '''2024 Summer Olympics''' took place in Paris, France from 26 July to 11 August 2024, welcoming over 10,500 athletes from 206 nations.
@@ -205,7 +227,9 @@ Rather than building single-use stadiums far away, Paris hosted competitions nea
 * Surfing events took place thousands of miles away on the famous waves of Tahiti.
 
 === Notable Milestones ===
-The Paris games achieved full gender parity among competing athletes for the first time in Olympic history.`,
+The Paris games achieved full gender parity among competing athletes for the first time in Olympic history.
+
+[[Category:Culture]]`,
 
   'Exoplanet Exploration': `== Exoplanet Exploration ==
 An '''exoplanet''' is any planet that circles a star outside our Solar System. Before the 1990s, scientists were not sure other stars had planets at all. As of 2024, astronomers have discovered more than 5,500 confirmed exoplanets.
@@ -215,7 +239,9 @@ Because planets are small and dim compared to their parent stars, scientists use
 * '''Transit Method:''' Watching for tiny dips in a star's brightness when an orbiting planet passes directly in front of it.
 * '''Wobble Method:''' Detecting slight gravitational tugs that a planet exerts on its host star.
 
-Space telescopes such as the [[James Webb Space Telescope]] can now inspect the thin atmospheres of these distant worlds to look for clouds, steam, and gases that might indicate habitability.`,
+Space telescopes such as the [[James Webb Space Telescope]] can now inspect the thin atmospheres of these distant worlds to look for clouds, steam, and gases that might indicate habitability.
+
+[[Category:Space]] [[Category:Astronomy]]`,
 
   'Voyager Interstellar Mission': `== Voyager Interstellar Mission ==
 The '''Voyager Interstellar Mission''' is the longest-running space journey in human history. NASA launched the twin probes Voyager 1 and Voyager 2 in 1977 to explore Jupiter and Saturn.
@@ -226,7 +252,9 @@ Both probes kept flying past Neptune and Uranus until they passed beyond the bou
 * '''Voyager 2''' followed in 2018.
 
 === Still Talking to Earth ===
-Even after more than 45 years in space, both probes continue sending back scientific data about cosmic rays and space magnetic fields. Their radio signals take over 22 hours to reach Earth.`,
+Even after more than 45 years in space, both probes continue sending back scientific data about cosmic rays and space magnetic fields. Their radio signals take over 22 hours to reach Earth.
+
+[[Category:Space]]`,
 
   'Global Chip Manufacturing': `== Global Chip Manufacturing ==
 '''Chip manufacturing''' is the precise process of printing microscopic circuits on silicon to produce computer chips (microprocessors).
@@ -236,7 +264,9 @@ Even after more than 45 years in space, both probes continue sending back scient
 * '''Printing Circuits:''' Advanced machines use ultraviolet light to project tiny wiring patterns onto the silicon, layer by layer.
 * '''Cutting and Packaging:''' A single wafer contains hundreds of chips. Once printed, they are sliced apart and sealed in protective black casings with metal pins.
 
-Modern chips pack billions of tiny transistors onto a fingernail-sized piece of silicon, powering phones, cars, [[Large Language Models]], and experimental [[Quantum Computing]].`
+Modern chips pack billions of tiny transistors onto a fingernail-sized piece of silicon, powering phones, cars, [[Large Language Models]], and experimental [[Quantum Computing]].
+
+[[Category:Technology]]`
 };
 
 export function seedIfEmpty(store) {

@@ -149,6 +149,7 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 - **Editor:** Full-width monospace editing area, accompanied by a required "Edit Summary" text input and a prominent "Save Page" button.
 - **Revision History List:** Chronological revision list detailing timestamp, revision ID, author badge, and edit summary, with one-click links to view past revisions.
 - **Special Pages & Search Results:** Clean tabular or list presentations for article listings, recent changes diff streams, and search match snippets.
+- **Category Navigation & Member Listings:** Clean bottom category bar (`.catlinks`) presenting tagged categories with semantic `<nav>` markup and dot delimiters. Category pages display dynamic alphabetical listings of member pages (`.category-members`) adhering to WCAG AA contrast.
 
 ## Do's and Don'ts
 

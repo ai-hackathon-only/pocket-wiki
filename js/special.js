@@ -5,12 +5,29 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
   const specialNav = () => `
     <nav class="special-nav" aria-label="Special pages navigation">
       <a href="#/special/AllPages">All pages</a> &bull;
+      <a href="#/special/Categories">Categories</a> &bull;
       <a href="#/special/RecentChanges">Recent changes</a> &bull;
       <a href="#/special/Search">Search</a> &bull;
       <a href="#/special/WhatLinksHere">What links here</a> &bull;
       <a href="#/special/Export">Export</a> &bull;
       <a href="#/special/Import">Import</a>
     </nav>`;
+
+  // --- Special:Categories ---
+  function categoriesPage() {
+    const cats = store.getAllCategories();
+    let body;
+    if (cats.length === 0) {
+      body = '<p class="notice">No categories exist yet. Add <code>[[Category:Name]]</code> to any page to categorise it.</p>';
+    } else {
+      const items = cats.map(c =>
+        `<li><a class="wikilink" href="${pageHref('Category:' + c.name)}">${escapeHtml(c.name)}</a> <span class="category-member-count">(${c.count} page${c.count === 1 ? '' : 's'})</span></li>`
+      ).join('');
+      body = `<p class="allpages-summary">Total categories: <strong>${cats.length}</strong></p>
+              <ul class="allpages-list">${items}</ul>`;
+    }
+    return `<h1>Categories</h1>${specialNav()}${body}`;
+  }
 
   // --- Special:AllPages ---
   function allPagesPage() {
@@ -273,6 +290,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
 
   // Register special page renderers
   specials['AllPages'] = allPagesPage;
+  specials['Categories'] = categoriesPage;
   specials['RecentChanges'] = recentChangesPage;
   specials['Search'] = searchPage;
   specials['WhatLinksHere'] = whatLinksHerePage;
@@ -281,6 +299,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
 
   // Case-insensitive aliases
   specials['allpages'] = allPagesPage;
+  specials['categories'] = categoriesPage;
   specials['recentchanges'] = recentChangesPage;
   specials['search'] = searchPage;
   specials['whatlinkshere'] = whatLinksHerePage;
