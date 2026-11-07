@@ -299,11 +299,11 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       if (!confirmed) return;
 
       try {
-        store.importAll(parsed);
-        alert(`Successfully imported ${count} page(s)! Redirecting to Main Page.`);
+        const imported = store.importAll(parsed);
+        alert(`Imported ${imported} page(s). Opening the Main Page.`);
         location.hash = '#/wiki/Main_Page';
       } catch (err) {
-        showError('Import failed: ' + err.message);
+        showError('Import failed, nothing was changed: ' + err.message);
       }
     };
 
