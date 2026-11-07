@@ -16,6 +16,8 @@ const safeDecode = s => { try { return decodeURIComponent(s || ''); } catch { re
 const titleFromPath = p => store.normalizeTitle(safeDecode(p));
 let flash = '';
 const enc = title => encodeURIComponent(title.replace(/ /g, '_'));
+let editingTitle = null;
+let editingRevId = null;
 
 const tabs = (title, active) => {
   const isTalk = title.startsWith('Talk:');
@@ -139,8 +141,11 @@ function shareImportPage() {
 
 function editPage(title) {
   const rev = store.load(title);
+  editingTitle = title;
+  editingRevId = rev ? rev.id : 0;
   return `<h1>${rev ? 'Editing' : 'Creating'} ${escapeHtml(title)}</h1>${tabs(title, 'edit')}
     <form class="edit-form" id="edit-form">
+      <div id="edit-conflict-notice" role="region" aria-live="polite"></div>
       <label for="edit-text">Page text (wikitext)</label>
       <textarea id="edit-text" name="text" rows="20" spellcheck="true">${escapeHtml(rev ? rev.text : '')}</textarea>
       <label for="edit-summary">Edit summary</label>
@@ -267,8 +272,12 @@ function diffPage(title, oldParam, newParam) {
     <p class="diff-footer"><a href="#/history/${enc}">← Back to page history</a></p>`;
 }
 
-function route() {
+function route(options = {}) {
   const [, kind = 'wiki', a, b, c] = (location.hash || '#/wiki/Main_Page').split('/');
+  if (kind !== 'edit') {
+    editingTitle = null;
+    editingRevId = null;
+  }
   let html, docTitle;
   if (kind === 'special') {
     const name = safeDecode(a);
@@ -429,8 +438,10 @@ function route() {
   document.title = `${docTitle} · pocket-wiki`;
   const a11yStatus = document.getElementById('a11y-status');
   if (a11yStatus) a11yStatus.textContent = `Navigated to ${docTitle}`;
-  app.focus({ preventScroll: true });
-  window.scrollTo(0, 0);
+  if (!options.preserveScroll) {
+    app.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
 }
 
 const searchForm = document.getElementById('search-form');
@@ -468,6 +479,44 @@ seedIfEmpty(store);
 // Load optional special pages, then start routing.
 import('./special.js').then(m => m.register?.(specials, { store, renderText, escapeHtml, pageHref, fmtTime }))
   .catch(() => {}).finally(() => { window.addEventListener('hashchange', route); route(); });
+
+// Synchronize open tabs when another tab modifies pages
+store.subscribe(() => {
+  const [, kind = 'wiki'] = (location.hash || '#/wiki/Main_Page').split('/');
+  if (kind === 'edit') {
+    if (editingTitle) {
+      const rev = store.load(editingTitle);
+      const revId = rev ? rev.id : 0;
+      if (revId !== editingRevId) {
+        const banner = document.getElementById('edit-conflict-notice');
+        if (banner) {
+          banner.innerHTML = `<div class="notice edit-conflict-banner">
+            <strong>Notice:</strong> This page was updated in another tab (revision ${revId}${rev?.ts ? ` at ${escapeHtml(fmtTime(rev.ts))}` : ''}). You can keep editing to save a new revision, or <a href="${pageHref(editingTitle)}">view the latest version</a>.
+          </div>`;
+        }
+      }
+    }
+  } else if (kind === 'rename' || kind === 'delete') {
+    const input = document.getElementById('rename-to');
+    if (!input || !input.value || input.value === editingTitle) {
+      route({ preserveScroll: true });
+    }
+  } else {
+    route({ preserveScroll: true });
+  }
+});
+
+// Synchronize skin selection across open tabs without requiring page reload
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', e => {
+    if (e.key === 'pocket-wiki-skin') {
+      const newSkin = e.newValue || 'paper';
+      document.documentElement.setAttribute('data-skin', newSkin);
+      const sel = document.getElementById('skin-select');
+      if (sel) sel.value = newSkin;
+    }
+  });
+}
 
 // Offline support: the service worker caches the app files after the first visit.
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {
