@@ -60,8 +60,8 @@ Unlike Wikipedia or server-hosted wikis, `pocket-wiki` requires zero server infr
 ## Product Principles
 
 - **The Local-Only Data Principle:** The user owns all data. Nothing ever leaves the browser unless explicitly exported by the user.
-- **The Zero-Friction Editing Principle:** Instant navigation and editing with standard wikitext markup, predictable link resolution, and transparent revision trails.
-- **The Uncompromising Safety Principle:** All user-supplied content and imported JSON must be strictly sanitized and HTML-escaped before rendering.
+- **The Direct Editing Principle:** Quick navigation and editing with standard wikitext markup, predictable link resolution, and revision history.
+- **The Security Principle:** All user-supplied content and imported JSON must be strictly sanitized and HTML-escaped before rendering.
 - **The Clean Utility Principle:** Clear typography, high-contrast readable prose, and zero clutter or extraneous chrome.
 
 ## Accessibility & Inclusion

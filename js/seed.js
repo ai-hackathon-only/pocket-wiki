@@ -3,13 +3,13 @@
 
 export const SEED_PAGES = {
   'Main Page': `== Welcome to pocket-wiki ==
-'''pocket-wiki''' is a standalone personal wiki engine inspired by MediaWiki that runs entirely inside your web browser. There is no server, no account creation, and no cloud database: every page, revision, and edit summary lives safely within your browser's local storage.
+'''pocket-wiki''' is a standalone personal wiki engine inspired by MediaWiki that runs entirely inside your web browser. There is no server, no account creation, and no cloud database: every page, revision, and edit summary is stored in your browser's local storage.
 
 === Core Highlights ===
 * '''Your Pages Stay in This Browser:''' Your notes and knowledge stay on your device under your complete control.
 * '''Wikitext Authoring:''' Familiar wiki syntax including headings, bold, italic, internal wikilinks, and lists.
 * '''Full Revision History:''' Track changes over time with per-save edit summaries and past revision viewing.
-* '''Instant Portability:''' Export and backup your entire wiki into a single JSON file via [[Special:Export]], or restore an existing backup using [[Special:Import]].
+* '''Export and Import:''' Export your entire wiki into a single JSON file via [[Special:Export]], or restore a backup file using [[Special:Import]].
 * '''Zero Dependencies:''' Built with plain HTML, CSS, and modern JavaScript ES modules without external frameworks or CDNs.
 
 === Explore Example Pages ===
@@ -81,7 +81,15 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 };
 
 export function seedIfEmpty(store) {
-  if (!store.isEmpty()) return;
+  if (!store.isEmpty()) {
+    if (typeof store.exists === 'function' && store.exists('Local Sovereignty') && !store.exists('Your Pages Stay in This Browser')) {
+      const oldRev = store.load('Local Sovereignty');
+      if (oldRev) {
+        store.save('Your Pages Stay in This Browser', oldRev.text, 'Update seed title for existing visitors');
+      }
+    }
+    return;
+  }
   for (const [title, text] of Object.entries(SEED_PAGES)) {
     store.save(title, text, 'Initial seed revision');
   }

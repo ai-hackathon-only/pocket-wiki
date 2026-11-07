@@ -1,6 +1,6 @@
 # pocket-wiki
 
-A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that runs entirely inside your browser.
+A personal wiki engine inspired by MediaWiki that runs entirely inside your browser with no server.
 
 **Live Demo:** [https://ai-hackathon-only.github.io/pocket-wiki/](https://ai-hackathon-only.github.io/pocket-wiki/)
 
@@ -13,7 +13,7 @@ A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that 
 - **Strict Content Security:** Strict Content Security Policy (CSP), zero external CDN requests, zero analytics, and guaranteed HTML escaping on all rendered content.
 - **Revision History:** Full page history tracking with timestamps, edit summaries, and past revision viewing.
 - **Special Pages:** Built-in `Special:AllPages`, `Special:RecentChanges`, `Special:Search` (title and full-text), `Special:Export` (JSON download/copy), and `Special:Import` (with overwrite confirmation).
-- **Instant Portability:** Export your entire wiki database to a single JSON file and import it anywhere.
+- **Export and Import:** Export your entire wiki to a single JSON file and import it into any browser.
 - **Responsive Design System:** Warm editorial typography (Charter/Georgia body, sans headings), single-column reading focus, and mobile parity at 390px viewports (specified in [DESIGN.md](DESIGN.md)).
 
 ---
