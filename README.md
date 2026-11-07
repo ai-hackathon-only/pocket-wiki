@@ -10,7 +10,7 @@ A personal wiki engine inspired by MediaWiki that runs entirely inside your brow
 
 - **Serverless & Local-First:** All wiki pages, edit histories, and revisions are persisted locally in browser `localStorage`.
 - **MediaWiki-Inspired Wikitext:** Supports headings (`== H2 ==`, `=== H3 ===`), bold (`'''bold'''`), italic (`''italic''`), internal links (`[[Page]]`, `[[Page|display]]`), redlinks for missing pages, external links (`[https://... label]`), and ordered/unordered lists.
-- **Strict Content Security:** Strict Content Security Policy (CSP), zero external CDN requests, zero analytics, and guaranteed HTML escaping on all rendered content.
+- **Strict Content Security:** Strict Content Security Policy (CSP), zero external CDN requests, zero analytics, and HTML escaping on all rendered content.
 - **Revision History:** Full page history tracking with timestamps, edit summaries, and past revision viewing.
 - **Special Pages:** Built-in `Special:AllPages`, `Special:RecentChanges`, `Special:Search` (title and full-text), `Special:Export` (JSON download/copy), and `Special:Import` (with overwrite confirmation).
 - **Export and Import:** Export your entire wiki to a single JSON file and import it into any browser.

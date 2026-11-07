@@ -68,7 +68,7 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 * '''\`index.html\`''': Single static entrypoint defining semantic shell structure, strict CSP headers, and mounting point \`#app\`.
 * '''\`css/style.css\`''': Responsive design system specified in \`DESIGN.md\`, honoring archival warmth, single-column reading, and mobile 390px parity.
 * '''\`js/storage.js\`''': Encapsulates all \`localStorage\` interactions under key \`pocket-wiki:v1\`. Handles loading, saving, listing, revision history, and JSON export/import.
-* '''\`js/wikitext.js\`''': Lightweight wikitext parser that escapes raw HTML first before safely transforming headings, inline styles, wikilinks, and nested lists.
+* '''\`js/wikitext.js\`''': Wikitext parser that escapes raw HTML first before safely transforming headings, inline styles, wikilinks, and nested lists.
 * '''\`js/diff.js\`''': Dependency-free Myers diff on lines with prefix and suffix optimization.
 * '''\`js/app.js\`''': Hash-based client router supporting routes:
 ** \`#/wiki/:title\` — Read view
@@ -82,11 +82,18 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 
 export function seedIfEmpty(store) {
   if (!store.isEmpty()) {
-    if (typeof store.exists === 'function' && store.exists('Local Sovereignty') && !store.exists('Your Pages Stay in This Browser')) {
-      const oldRev = store.load('Local Sovereignty');
-      if (oldRev) {
-        store.save('Your Pages Stay in This Browser', oldRev.text, 'Update seed title for existing visitors');
+    try {
+      if (typeof localStorage !== 'undefined' && !localStorage.getItem('pocket_wiki_seed_migrated_v1')) {
+        localStorage.setItem('pocket_wiki_seed_migrated_v1', '1');
+        if (typeof store.exists === 'function' && store.exists('Local Sovereignty') && !store.exists('Your Pages Stay in This Browser')) {
+          const oldRev = store.load('Local Sovereignty');
+          if (oldRev) {
+            store.save('Your Pages Stay in This Browser', oldRev.text, 'Update seed title for existing visitors');
+          }
+        }
       }
+    } catch (_) {
+      // ignore storage access errors
     }
     return;
   }

@@ -12,11 +12,11 @@ Plain HTML5, CSS3, and JavaScript ES modules with zero external dependencies, no
 
 ## Users
 
-Primary users are personal note-takers, knowledge workers, researchers, and offline-first writers who want an instant, private, distraction-free wiki without account signups, server setup, or database hosting.
+Primary users are personal note-takers, knowledge workers, researchers, and offline-first writers who want a private, distraction-free wiki without account signups, server setup, or database hosting.
 
 ## Product Purpose
 
-`pocket-wiki` provides a lightweight, MediaWiki-inspired personal wiki experience running 100% inside the user's web browser. Your pages stay in this browser: pages, edit histories, and revisions remain completely in local browser storage, with easy export and import as a single portable JSON file.
+`pocket-wiki` provides a MediaWiki-inspired personal wiki that runs in the browser. Your pages stay in this browser: pages, edit histories, and revisions remain completely in local browser storage, with export and import as a single JSON file.
 
 ## Positioning
 
@@ -35,7 +35,7 @@ Unlike Wikipedia or server-hosted wikis, `pocket-wiki` requires zero server infr
   - Wikitext rendering: `== H2 ==`, `=== H3 ===`, `'''bold'''`, `''italic''`, `[[Page]]` and `[[Page|label]]` links, `[https://example.org label]` external links, nested `*` / `#` lists, blank line paragraph separation.
   - Page revision history: viewing timestamped revisions with summaries and inspecting past states.
   - Special pages: `Special:AllPages` and `Special:RecentChanges`.
-  - Search: instantaneous title matching and full-text search across all revisions/pages.
+  - Search: title matching and full-text search across all revisions/pages.
   - Import/Export: whole-wiki single-file JSON export and safe import with confirmation modal before replacement.
   - Seeded initial state: Main Page explaining browser storage, AI hackathon provenance, and example wikitext pages.
 - **Constraints:**
@@ -47,7 +47,7 @@ Unlike Wikipedia or server-hosted wikis, `pocket-wiki` requires zero server infr
 ## Brand Commitments
 
 - **Name:** `pocket-wiki`
-- **Tagline:** "A wiki in your pocket — zero server, 100% in your browser."
+- **Tagline:** "A wiki in your pocket — no server, stored in your browser."
 - **Identity & Aesthetic:** Purposeful, editorial, warm archival paper tones, high typographic clarity.
 - **Licensing:** Engine code released under MIT License; seeded wiki content released under CC BY-SA 4.0.
 
