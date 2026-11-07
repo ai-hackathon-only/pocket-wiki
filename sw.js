@@ -3,7 +3,7 @@
 // deploy shows up on the next load. Offline, the cached copy is used.
 // FILES only needs the files for a first offline load; any other same-origin
 // file is cached the first time it is fetched online.
-const CACHE = 'pocket-wiki-v4';
+const CACHE = 'pocket-wiki-v5';
 const FILES = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const FILES = [
   './js/skin-init.js',
   './js/app.js',
   './js/diff.js',
+  './js/import-article.js',
   './js/seed.js',
   './js/share.js',
   './js/special.js',

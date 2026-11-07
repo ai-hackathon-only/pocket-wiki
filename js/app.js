@@ -477,7 +477,10 @@ if (skinSelect) {
 
 seedIfEmpty(store);
 // Load optional special pages, then start routing.
-import('./special.js').then(m => m.register?.(specials, { store, renderText, escapeHtml, pageHref, fmtTime }))
+Promise.all([
+  import('./special.js').then(m => m.register?.(specials, { store, renderText, escapeHtml, pageHref, fmtTime })),
+  import('./import-article.js').then(m => m.register?.(specials, { store, pageHref })),
+].map(p => p.catch(() => {})))
   .catch(() => {}).finally(() => { window.addEventListener('hashchange', route); route(); });
 
 // Synchronize open tabs when another tab modifies pages
@@ -501,6 +504,8 @@ store.subscribe(() => {
     if (!input || !input.value || input.value === editingTitle) {
       route({ preserveScroll: true });
     }
+  } else if (kind === 'special' && [...document.querySelectorAll('main textarea, main input[type=text], main input[type=url], main input[type=file]')].some(el => el.value)) {
+    // Don't wipe what the reader typed into a special page form (import, search).
   } else {
     route({ preserveScroll: true });
   }
