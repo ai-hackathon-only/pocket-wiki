@@ -1,0 +1,9 @@
+/* Minimal placeholder; the design owner replaces this following DESIGN.md. */
+body { font-family: system-ui, sans-serif; max-width: 60rem; margin: 0 auto; padding: 1rem; line-height: 1.6; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.site-header { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.page-tabs { display: flex; gap: 1rem; }
+.page-tabs [aria-current] { font-weight: 700; }
+.wikilink.new { color: #b32424; }
+.edit-form { display: grid; gap: .5rem; }
+.edit-form textarea { font-family: ui-monospace, monospace; width: 100%; }

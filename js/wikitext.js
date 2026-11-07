@@ -7,6 +7,8 @@ export function escapeHtml(s) {
 }
 
 export function pageHref(title) {
+  const special = title.match(/^Special:(.+)$/);
+  if (special) return '#/special/' + encodeURIComponent(special[1].replace(/ /g, ''));
   return '#/wiki/' + encodeURIComponent(title.replace(/ /g, '_'));
 }
 
