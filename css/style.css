@@ -19,6 +19,8 @@
   --color-link-new-hover: #8e0000;
   --color-status-diff-add: #2e7d32;
   --color-status-diff-del: #c62828;
+  --color-diff-add-bg: #e8f5e9;
+  --color-diff-del-bg: #fdebee;
 
   --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -182,6 +184,12 @@ a.wikilink.new:hover {
   flex: 1;
 }
 
+/* #app gets focus after each route change so screen readers start at the
+   content; it is not a control, so no visible ring. */
+#app:focus {
+  outline: none;
+}
+
 /* Typography Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
@@ -254,6 +262,16 @@ p {
 /* Wiki Content Render */
 .wiki-content {
   margin-bottom: var(--space-xl);
+}
+
+/* Keep prose lines near 70 characters (DESIGN.md: comfortable reading).
+   1ch is the width of "0", wider than an average serif letter, so 58ch holds about 72. */
+.wiki-content p, .wiki-content ul, .wiki-content ol, .notice {
+  max-width: 58ch;
+}
+
+.wiki-content p {
+  text-wrap: pretty;
 }
 
 .wiki-content ul, .wiki-content ol {
@@ -644,7 +662,7 @@ mark {
 
 .search-exact-title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.0625rem;
 }
 
 .search-title-matches {
@@ -854,4 +872,176 @@ mark {
   font-weight: 600;
   margin-top: var(--space-sm);
   font-family: var(--font-heading);
+}
+
+/* Revision diff & history compare */
+.history-form {
+  margin-top: var(--space-md);
+}
+
+.history-compare-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.btn-compare {
+  padding: 6px 14px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 38px;
+}
+
+.btn-compare:hover {
+  background: var(--color-surface-dim);
+  border-color: var(--color-text-secondary);
+}
+
+.history-legend {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+}
+
+.history-radios {
+  display: inline-flex;
+  gap: var(--space-xs);
+  margin-right: var(--space-xs);
+  vertical-align: middle;
+}
+
+.history-diff-cell {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-right: var(--space-xs);
+}
+
+.diff-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+}
+
+.diff-header-col strong {
+  display: block;
+  font-family: var(--font-heading);
+  margin-bottom: var(--space-xs);
+}
+
+.diff-stats {
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.diff-stat-add {
+  color: var(--color-status-diff-add);
+}
+
+.diff-stat-del {
+  color: var(--color-status-diff-del);
+}
+
+.diff-container {
+  overflow-x: auto;
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  margin-bottom: var(--space-md);
+}
+
+.diff-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-code);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.diff-row td {
+  padding: 4px 8px;
+  vertical-align: top;
+}
+
+.diff-num-col {
+  width: 3rem;
+}
+
+.diff-marker-col {
+  width: 1.5rem;
+}
+
+.diff-num {
+  text-align: right;
+  color: var(--color-text-secondary);
+  user-select: none;
+  font-size: 0.875rem;
+  width: 2.5rem;
+  border-right: 1px solid var(--color-surface-border);
+}
+
+.diff-marker {
+  text-align: center;
+  font-weight: 700;
+  user-select: none;
+  width: 1.25rem;
+}
+
+.diff-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.diff-content code {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  padding: 0;
+}
+
+.diff-row-add {
+  background-color: var(--color-diff-add-bg);
+}
+
+.diff-row-add .diff-marker,
+.diff-row-add .diff-content {
+  color: var(--color-primary-hover);
+}
+
+.diff-row-del {
+  background-color: var(--color-diff-del-bg);
+}
+
+.diff-row-del .diff-marker,
+.diff-row-del .diff-content {
+  color: var(--color-link-new-hover);
+}
+
+.diff-row-eq:hover {
+  background-color: var(--color-surface-dim);
+}
+
+.diff-footer {
+  margin-top: var(--space-md);
+}
+
+@media (max-width: 600px) {
+  .diff-header {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
 }

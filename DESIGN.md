@@ -19,6 +19,8 @@ colors:
   link-new-hover: "#8e0000"
   status-diff-add: "#2e7d32"
   status-diff-del: "#c62828"
+  diff-add-bg: "#e8f5e9"
+  diff-del-bg: "#fdebee"
 typography:
   display:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
@@ -49,6 +51,12 @@ typography:
     fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.5
+    letterSpacing: "0"
+  small:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.4
     letterSpacing: "0"
 rounded:
   sm: "4px"
@@ -86,7 +94,7 @@ Colors are organized strictly by functional role:
 - **Primary / Brand:** Forest green (`primary`: `#1b5e20`, hover: `#144718`, tint: `#e8f5e9`). Represents growth, stability, and enduring local storage. Used for primary save actions, active tabs, and brand highlights.
 - **Backgrounds & Surfaces:**
   - `neutral-bg` (`#fcfbf9`): Page canvas background providing warm, glare-free readability.
-  - `surface` (`#ffffff`): Elevated card and content containers.
+  - `surface` (`#ffffff`): Card and content containers.
   - `surface-dim` (`#f4f1ea`): Subdued toolbars, tables of contents, and metadata sidecars.
   - `surface-border` (`#e0dcd3`): Soft structural dividing lines and form inputs.
 - **Text & Content:**
@@ -105,11 +113,12 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 
 - **Article Prose:** Serif typography using system-available classic book serifs (`Charter`, `Georgia`, `'Times New Roman'`) at `1.0625rem` (17px) with generous `1.65` line height.
 - **Interface & Headings:** Sans-serif typography (`-apple-system`, `BlinkMacSystemFont`, `'Segoe UI'`, `Roboto`, sans-serif) for article headings (`H1`, `H2`, `H3`), tabs, buttons, search bars, and navigation labels.
+- **Small Meta Text:** `0.875rem` sans for revision times, revision ids, status lines and the export/import JSON boxes.
 - **Code & Wikitext Source:** Monospace stack (`ui-monospace`, `SFMono-Regular`, `Consolas`, `Menlo`, monospace) for edit mode textareas, code blocks, and JSON export/import displays.
 
 ## Layout
 
-**The Single Column Center Rule.** Article content is centered within a maximum width of `54rem` (864px) with generous horizontal padding (`24px` on desktop, `16px` on mobile), ensuring optimal line length (65–75 characters per line) for deep reading.
+**The Single Column Center Rule.** Article content is centered within a maximum width of `54rem` (864px) with generous horizontal padding (`24px` on desktop, `16px` on mobile), and paragraphs and lists inside it are capped at `58ch` (1ch is the width of "0", so this holds about 72 serif characters) and paragraphs use `text-wrap: pretty` to avoid one-word last lines. Headings are not capped. The column alone would allow about 107.
 
 **The Mobile Parity Rule.** The wiki layout must remain completely functional, readable, and touch-friendly at 390px mobile viewport with zero horizontal overflow:
 - Top bar stacks or collapses neatly.
