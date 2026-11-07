@@ -19,6 +19,8 @@ colors:
   link-new-hover: "#8e0000"
   status-diff-add: "#2e7d32"
   status-diff-del: "#c62828"
+  diff-add-bg: "#e8f5e9"
+  diff-del-bg: "#fdebee"
 typography:
   display:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
