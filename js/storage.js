@@ -45,7 +45,12 @@ function write(data) {
 
 export function normalizeTitle(title) {
   const t = String(title || '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
-  return t ? t[0].toUpperCase() + t.slice(1) : '';
+  if (!t) return '';
+  if (t.toLowerCase().startsWith('talk:')) {
+    const sub = t.slice(5).trim();
+    return 'Talk:' + (sub ? sub[0].toUpperCase() + sub.slice(1) : '');
+  }
+  return t[0].toUpperCase() + t.slice(1);
 }
 
 export function exists(title) {

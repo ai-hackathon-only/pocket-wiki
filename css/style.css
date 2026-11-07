@@ -418,11 +418,24 @@ p {
 /* Page Tabs */
 .page-tabs {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: var(--space-xs);
   border-bottom: 1px solid var(--color-surface-border);
   margin-bottom: var(--space-lg);
   font-family: var(--font-heading);
   font-size: 0.9375rem;
+  flex-wrap: wrap;
+}
+
+.tab-group {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.tab-group-actions {
+  margin-left: auto;
 }
 
 .page-tabs a {
@@ -445,6 +458,14 @@ p {
   border-bottom-color: var(--color-primary);
   font-weight: 600;
   background-color: transparent;
+}
+
+.page-tabs a.new {
+  color: var(--color-link-new);
+}
+
+.page-tabs a.new:hover {
+  color: var(--color-link-new-hover);
 }
 
 /* Wiki Content Render */
@@ -1432,4 +1453,53 @@ mark {
   border-radius: var(--radius-md);
   padding: var(--space-md);
   margin-bottom: var(--space-lg);
+}
+
+/* Special:WhatLinksHere */
+.whatlinkshere-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.whatlinkshere-input-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.whatlinkshere-input-row input {
+  flex: 1;
+  min-width: 220px;
+  max-width: 400px;
+}
+
+.whatlinkshere-results h2 {
+  font-size: 1.25rem;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.whatlinkshere-count {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  margin-bottom: var(--space-sm);
+}
+
+.whatlinkshere-list {
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.whatlinkshere-item {
+  margin-bottom: var(--space-xs);
+}
+
+.whatlinkshere-redirect {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
 }

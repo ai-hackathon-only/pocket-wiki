@@ -14,14 +14,35 @@ const fmtTime = ts => new Date(ts).toLocaleString();
 // A bad escape like '#/wiki/100%' must not throw; fall back to the raw text.
 const safeDecode = s => { try { return decodeURIComponent(s || ''); } catch { return s || ''; } };
 const titleFromPath = p => store.normalizeTitle(safeDecode(p));
-const tabs = (title, active) => `
-  <nav class="page-tabs" aria-label="Page">
-    ${[['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History'], ['rename', 'Rename'], ['delete', 'Delete'], ['share', 'Share']].map(([k, label]) =>
-      `<a href="#/${k}/${encodeURIComponent(title.replace(/ /g, '_'))}"${k === active ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
-  </nav>`;
-
 let flash = '';
 const enc = title => encodeURIComponent(title.replace(/ /g, '_'));
+
+const tabs = (title, active) => {
+  const isTalk = title.startsWith('Talk:');
+  const subjectTitle = isTalk ? title.slice(5) : title;
+  const talkTitle = isTalk ? title : `Talk:${title}`;
+  const subjectExists = store.exists(subjectTitle);
+  const talkExists = store.exists(talkTitle);
+
+  const subjectHref = `#/wiki/${enc(subjectTitle)}`;
+  const talkHref = `#/wiki/${enc(talkTitle)}`;
+  const whatLinksHref = `#/special/WhatLinksHere/${enc(title)}`;
+
+  const actions = [['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History'], ['rename', 'Rename'], ['delete', 'Delete'], ['share', 'Share']];
+
+  return `
+  <nav class="page-tabs" aria-label="Page tools and navigation">
+    <div class="tab-group tab-group-namespaces">
+      <a href="${subjectHref}" class="tab-item tab-namespace${!subjectExists ? ' new' : ''}"${(!isTalk && active === 'wiki') ? ' aria-current="page"' : ''}>${isTalk ? 'Article' : 'Page'}</a>
+      <a href="${talkHref}" class="tab-item tab-namespace${!talkExists ? ' new' : ''}"${(isTalk && active === 'wiki') ? ' aria-current="page"' : ''}>Discussion</a>
+    </div>
+    <div class="tab-group tab-group-actions">
+      ${actions.map(([k, label]) =>
+        `<a href="#/${k}/${enc(title)}"${k === active ? ' aria-current="page"' : ''} class="tab-item">${label}</a>`).join('')}
+      <a href="${whatLinksHref}" class="tab-item tab-whatlinkshere">What links here</a>
+    </div>
+  </nav>`;
+};
 
 // Follows up to 5 redirect hops ("#REDIRECT [[Target]]") and stops on a loop;
 // '#/wiki/Old/noredirect' shows the redirect page itself.
@@ -252,7 +273,8 @@ function route() {
   if (kind === 'special') {
     const name = safeDecode(a);
     const fn = specials[name];
-    html = fn ? fn(new URLSearchParams(b || '')) : `<h1>Special:${escapeHtml(name)}</h1><p class="notice">No such special page.</p>`;
+    const subpath = safeDecode(b);
+    html = fn ? fn(new URLSearchParams(b || ''), subpath) : `<h1>Special:${escapeHtml(name)}</h1><p class="notice">No such special page.</p>`;
     docTitle = 'Special:' + name;
   } else if (kind === 'share-import') {
     docTitle = 'Shared Page';

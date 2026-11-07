@@ -34,7 +34,8 @@ Unlike Wikipedia or server-hosted wikis, `pocket-wiki` requires zero server infr
   - View, create, and edit pages with mandatory edit summaries.
   - Wikitext rendering: `== H2 ==`, `=== H3 ===`, `'''bold'''`, `''italic''`, `[[Page]]` and `[[Page|label]]` links, `[https://example.org label]` external links, nested `*` / `#` lists, blank line paragraph separation.
   - Page revision history: viewing timestamped revisions with summaries and inspecting past states.
-  - Special pages: `Special:AllPages` and `Special:RecentChanges`.
+  - Special pages: `Special:AllPages`, `Special:RecentChanges`, and `Special:WhatLinksHere`.
+  - Talk pages: Article / Discussion namespace pairing (`Talk:X`) for page commentary and notes.
   - Search: title matching and full-text search across all revisions/pages.
   - Import/Export: whole-wiki single-file JSON export and safe import with confirmation modal before replacement.
   - Seeded initial state: Main Page explaining browser storage, AI hackathon provenance, and example wikitext pages.
