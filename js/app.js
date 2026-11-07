@@ -111,7 +111,7 @@ function sharePage(title) {
 function shareImportPage() {
   return `<div id="share-import-container">
     <h1>Shared Page</h1>
-    <p class="notice" id="share-import-status">Decompressing shared page data...</p>
+    <p class="notice" id="share-import-status">Loading the shared page…</p>
     <div id="share-import-content" hidden></div>
   </div>`;
 }
@@ -390,7 +390,7 @@ function route() {
             document.execCommand('copy');
           }
           if (copyStatus) {
-            copyStatus.textContent = 'Link copied to clipboard!';
+            copyStatus.textContent = 'Link copied.';
             copyStatus.hidden = false;
             setTimeout(() => { copyStatus.hidden = true; }, 3000);
           }
