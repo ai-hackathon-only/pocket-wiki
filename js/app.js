@@ -9,7 +9,9 @@ export const specials = {}; // name -> (params) => html
 
 const renderText = text => render(text, { exists: t => t.startsWith('Special:') || store.exists(t), normalize: store.normalizeTitle });
 const fmtTime = ts => new Date(ts).toLocaleString();
-const titleFromPath = p => store.normalizeTitle(decodeURIComponent(p || ''));
+// A bad escape like '#/wiki/100%' must not throw; fall back to the raw text.
+const safeDecode = s => { try { return decodeURIComponent(s || ''); } catch { return s || ''; } };
+const titleFromPath = p => store.normalizeTitle(safeDecode(p));
 const tabs = (title, active) => `
   <nav class="page-tabs" aria-label="Page">
     ${[['wiki', 'Read'], ['edit', 'Edit'], ['history', 'History']].map(([k, label]) =>
@@ -64,9 +66,9 @@ function route() {
   const [, kind = 'wiki', a, b] = (location.hash || '#/wiki/Main_Page').split('/');
   let html, docTitle;
   if (kind === 'special') {
-    const name = decodeURIComponent(a || '');
+    const name = safeDecode(a);
     const fn = specials[name];
-    html = fn ? fn(new URLSearchParams(decodeURIComponent(b || ''))) : `<h1>Special:${escapeHtml(name)}</h1><p class="notice">No such special page.</p>`;
+    html = fn ? fn(new URLSearchParams(b || '')) : `<h1>Special:${escapeHtml(name)}</h1><p class="notice">No such special page.</p>`;
     docTitle = 'Special:' + name;
   } else {
     const title = titleFromPath(a) || 'Main Page';
@@ -102,7 +104,7 @@ function route() {
 document.getElementById('search-form').addEventListener('submit', e => {
   e.preventDefault();
   const q = new FormData(e.target).get('q').trim();
-  if (q) location.hash = '#/special/Search/' + encodeURIComponent('q=' + q);
+  if (q) location.hash = '#/special/Search/q=' + encodeURIComponent(q);
 });
 
 seedIfEmpty(store);
