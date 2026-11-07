@@ -9,7 +9,8 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       <a href="#/special/Search">Search</a> &bull;
       <a href="#/special/WhatLinksHere">What links here</a> &bull;
       <a href="#/special/Export">Export</a> &bull;
-      <a href="#/special/Import">Import</a>
+      <a href="#/special/Import">Import</a> &bull;
+      <a href="#/special/ImportArticle">Import an article</a>
     </nav>`;
 
   // --- Special:AllPages ---
