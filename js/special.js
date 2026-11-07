@@ -3,13 +3,38 @@
 
 export function register(specials, { store, renderText, escapeHtml, pageHref, fmtTime }) {
   const specialNav = () => `
-    <nav class="special-nav" aria-label="Special pages navigation" style="margin-bottom: 1.5rem; font-size: 0.95rem;">
+    <nav class="special-nav" aria-label="Special pages navigation">
       <a href="#/special/AllPages">All pages</a> &bull;
       <a href="#/special/RecentChanges">Recent changes</a> &bull;
       <a href="#/special/Search">Search</a> &bull;
       <a href="#/special/Export">Export</a> &bull;
       <a href="#/special/Import">Import</a>
     </nav>`;
+
+  // Helper to extract query from URLSearchParams or location.hash safely
+  function extractSearchQuery(params) {
+    let q = (params && params.get('q')) || '';
+    // If the hash contains an encoded or unencoded search string in #/special/Search/...
+    // app.js splits on '/' so param segment is after #/special/Search/
+    const match = (typeof location !== 'undefined' && location.hash)
+      ? location.hash.match(/#\/special\/Search\/(.+)$/)
+      : null;
+
+    if (match) {
+      try {
+        const decodedSegment = decodeURIComponent(match[1]);
+        if (decodedSegment.startsWith('q=')) {
+          const val = decodedSegment.slice(2);
+          try {
+            const doubleDecoded = decodeURIComponent(val);
+            if (doubleDecoded !== val) return doubleDecoded.trim();
+          } catch {}
+          return val.trim();
+        }
+      } catch {}
+    }
+    return q.trim();
+  }
 
   // --- Special:AllPages ---
   function allPagesPage() {
@@ -21,8 +46,8 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       const items = titles.map(t =>
         `<li><a class="wikilink" href="${pageHref(t)}">${escapeHtml(t)}</a></li>`
       ).join('');
-      body = `<p style="margin-bottom: 1rem;">Total pages: <strong>${titles.length}</strong></p>
-              <ul class="allpages-list" style="columns: 2 16rem; gap: 1.5rem; list-style-type: none; padding-left: 0;">${items}</ul>`;
+      body = `<p class="allpages-summary">Total pages: <strong>${titles.length}</strong></p>
+              <ul class="allpages-list">${items}</ul>`;
     }
     return `<h1>All Pages</h1>${specialNav()}${body}`;
   }
@@ -37,22 +62,22 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       const items = changes.map(c => {
         const encTitle = encodeURIComponent(c.title.replace(/ /g, '_'));
         const revLink = `#/rev/${encTitle}/${c.id}`;
-        const summary = c.summary ? escapeHtml(c.summary) : '<span style="opacity: 0.7; font-style: italic;">(no summary)</span>';
-        return `<li style="margin-bottom: 0.5rem; line-height: 1.4;">
-          <time datetime="${escapeHtml(c.ts)}" style="font-size: 0.85rem; opacity: 0.8;">${escapeHtml(fmtTime(c.ts))}</time> &mdash;
-          <a class="wikilink" href="${pageHref(c.title)}" style="font-weight: 600;">${escapeHtml(c.title)}</a>
-          <span style="font-size: 0.85rem;">(<a href="${revLink}">rev #${c.id}</a>)</span> &mdash;
+        const summary = c.summary ? escapeHtml(c.summary) : '<span class="rc-empty-summary">(no summary)</span>';
+        return `<li class="rc-item">
+          <time datetime="${escapeHtml(c.ts)}" class="rc-time">${escapeHtml(fmtTime(c.ts))}</time> &mdash;
+          <a class="wikilink rc-title" href="${pageHref(c.title)}">${escapeHtml(c.title)}</a>
+          <span class="rc-rev">(<a href="${revLink}">rev #${c.id}</a>)</span> &mdash;
           <span class="rc-summary">${summary}</span>
         </li>`;
       }).join('');
-      body = `<ul class="recentchanges-list" style="list-style-type: none; padding-left: 0;">${items}</ul>`;
+      body = `<ul class="recentchanges-list">${items}</ul>`;
     }
     return `<h1>Recent Changes</h1>${specialNav()}${body}`;
   }
 
   // --- Special:Search ---
   function searchPage(params) {
-    const q = (params.get('q') || '').trim();
+    const q = extractSearchQuery(params);
     const qLower = q.toLowerCase();
 
     let resultsHtml = '';
@@ -86,8 +111,8 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       let sections = [];
       if (exactTitle) {
         sections.push(`
-          <div class="search-exact" style="background: #eef6ff; border-left: 4px solid #1a73e8; padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
-            Page title matches: <a class="wikilink" href="${pageHref(exactTitle)}" style="font-weight: 700; font-size: 1.1rem;">${escapeHtml(exactTitle)}</a>
+          <div class="search-exact">
+            Page title matches: <a class="wikilink search-exact-title" href="${pageHref(exactTitle)}">${escapeHtml(exactTitle)}</a>
           </div>`);
       }
 
@@ -96,9 +121,9 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
           `<li><a class="wikilink" href="${pageHref(t)}">${escapeHtml(t)}</a></li>`
         ).join('');
         sections.push(`
-          <div class="search-title-matches" style="margin-bottom: 1.5rem;">
+          <div class="search-title-matches">
             <h2>Page title matches (${titleMatches.length})</h2>
-            <ul style="list-style-type: square; padding-left: 1.25rem;">${list}</ul>
+            <ul>${list}</ul>
           </div>`);
       }
 
@@ -108,15 +133,15 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
           // Highlight search term occurrences in snippet
           const regex = new RegExp(escapeRegex(escapeHtml(q)), 'gi');
           const highlighted = safeSnippet.replace(regex, match => `<mark>${match}</mark>`);
-          return `<li style="margin-bottom: 0.75rem;">
-            <div><a class="wikilink" href="${pageHref(m.title)}" style="font-weight: 600;">${escapeHtml(m.title)}</a></div>
-            <div style="font-size: 0.9rem; opacity: 0.85; margin-top: 0.2rem;">${highlighted}</div>
+          return `<li class="search-text-item">
+            <div><a class="wikilink search-match-title" href="${pageHref(m.title)}">${escapeHtml(m.title)}</a></div>
+            <div class="search-match-snippet">${highlighted}</div>
           </li>`;
         }).join('');
         sections.push(`
-          <div class="search-text-matches" style="margin-bottom: 1.5rem;">
+          <div class="search-text-matches">
             <h2>Page text matches (${textMatches.length})</h2>
-            <ul style="list-style-type: none; padding-left: 0;">${list}</ul>
+            <ul>${list}</ul>
           </div>`);
       }
 
@@ -126,8 +151,8 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       }
 
       resultsHtml = `
-        <div class="search-results" style="margin-top: 1.5rem;">
-          <p style="opacity: 0.8; font-size: 0.9rem;">Showing results for &ldquo;<strong>${escapeHtml(q)}</strong>&rdquo; (${totalMatches} match${totalMatches === 1 ? '' : 'es'}):</p>
+        <div class="search-results">
+          <p class="search-results-summary">Showing results for &ldquo;<strong>${escapeHtml(q)}</strong>&rdquo; (${totalMatches} match${totalMatches === 1 ? '' : 'es'}):</p>
           ${sections.join('')}
         </div>`;
     }
@@ -135,9 +160,9 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
     return `
       <h1>Search</h1>
       ${specialNav()}
-      <form class="special-search-form" id="special-search-page-form" role="search" style="display: flex; gap: 0.5rem; max-width: 32rem; margin-bottom: 1.5rem;">
-        <input type="search" name="q" id="search-query-input" value="${escapeHtml(q)}" placeholder="Search wiki titles and text..." required style="flex: 1; padding: 0.5rem;">
-        <button type="submit" style="padding: 0.5rem 1rem;">Search</button>
+      <form class="special-search-form" id="special-search-page-form" role="search">
+        <input type="search" name="q" id="search-query-input" value="${escapeHtml(q)}" placeholder="Search wiki titles and text..." required>
+        <button type="submit">Search</button>
       </form>
       ${resultsHtml}`;
   }
@@ -152,17 +177,17 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       <h1>Export Wiki</h1>
       ${specialNav()}
       <p>Export the entire wiki including all pages, revisions, and edit history into a single JSON file.</p>
-      <div style="background: #f7f9fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
-        <p style="margin-top: 0;">Pages available for export: <strong>${count}</strong></p>
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <button type="button" id="btn-export-download" style="padding: 0.5rem 1rem; font-weight: 600;">Download pocket-wiki.json</button>
-          <button type="button" id="btn-export-copy" style="padding: 0.5rem 1rem;">Copy JSON to clipboard</button>
+      <div class="export-panel">
+        <p>Pages available for export: <strong>${count}</strong></p>
+        <div class="export-actions">
+          <button type="button" id="btn-export-download" class="btn-export btn-export-primary">Download pocket-wiki.json</button>
+          <button type="button" id="btn-export-copy" class="btn-export">Copy JSON to clipboard</button>
         </div>
-        <div id="export-status-msg" style="margin-top: 0.5rem; font-size: 0.85rem; color: #1a7f37;" aria-live="polite"></div>
+        <div id="export-status-msg" class="export-status" aria-live="polite"></div>
       </div>
-      <details>
-        <summary style="cursor: pointer; font-weight: 600; margin-bottom: 0.5rem;">Preview raw JSON</summary>
-        <textarea id="export-preview-area" readonly rows="12" style="width: 100%; font-family: ui-monospace, monospace; font-size: 0.85rem; box-sizing: border-box;">${escapeHtml(jsonStr)}</textarea>
+      <details class="export-details">
+        <summary class="export-summary">Preview raw JSON</summary>
+        <textarea id="export-preview-area" class="export-textarea" readonly rows="12">${escapeHtml(jsonStr)}</textarea>
       </details>`;
   }
 
@@ -171,20 +196,20 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
     return `
       <h1>Import Wiki</h1>
       ${specialNav()}
-      <p style="color: #b32424; font-weight: 600;">Caution: Importing will overwrite all existing pages and revision history with data from the imported file.</p>
-      <form id="special-import-form" style="display: grid; gap: 1rem; max-width: 38rem; margin-bottom: 1.5rem;">
+      <p class="import-warning">Caution: Importing will overwrite all existing pages and revision history with data from the imported file.</p>
+      <form id="special-import-form" class="special-import-form">
         <div>
-          <label for="import-file-input" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Select JSON export file:</label>
-          <input type="file" id="import-file-input" accept=".json,application/json" style="display: block;">
+          <label for="import-file-input" class="import-field-label">Select JSON export file:</label>
+          <input type="file" id="import-file-input" class="import-file-input" accept=".json,application/json">
         </div>
         <div>
-          <label for="import-textarea" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Or paste exported JSON text:</label>
-          <textarea id="import-textarea" rows="8" placeholder='{ "pages": { ... } }' style="width: 100%; font-family: ui-monospace, monospace; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+          <label for="import-textarea" class="import-field-label">Or paste exported JSON text:</label>
+          <textarea id="import-textarea" class="import-textarea" rows="8" placeholder='{ "pages": { ... } }'></textarea>
         </div>
         <div>
-          <button type="submit" id="btn-submit-import" style="padding: 0.6rem 1.2rem; background: #b32424; color: #fff; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Import and Replace Data</button>
+          <button type="submit" id="btn-submit-import" class="btn-import-danger">Import and Replace Data</button>
         </div>
-        <div id="import-error-msg" style="color: #b32424; font-weight: 600;" aria-live="assertive"></div>
+        <div id="import-error-msg" class="import-error" aria-live="assertive"></div>
       </form>`;
   }
 
@@ -207,7 +232,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
   specials['import'] = importPage;
 
   // One-time delegated event listeners for special pages
-  if (!window._pocketWikiSpecialListenersBound) {
+  if (typeof window !== 'undefined' && !window._pocketWikiSpecialListenersBound) {
     window._pocketWikiSpecialListenersBound = true;
 
     // Search page form submission
@@ -216,7 +241,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
         e.preventDefault();
         const input = e.target.querySelector('input[name="q"]');
         const q = (input ? input.value : '').trim();
-        location.hash = '#/special/Search/' + encodeURIComponent('q=' + q);
+        location.hash = '#/special/Search/' + encodeURIComponent('q=' + encodeURIComponent(q));
       } else if (e.target.id === 'special-import-form') {
         e.preventDefault();
         handleImportSubmit(e.target);
