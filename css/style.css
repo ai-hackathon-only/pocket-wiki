@@ -126,6 +126,46 @@
   --line-height-body: 1.5;
 }
 
+/* Skin 4: Midnight (Deep Slate Elegant Dark Reading Theme) */
+[data-skin="midnight"] {
+  --color-primary: #38bdf8;
+  --color-primary-hover: #7dd3fc;
+  --color-primary-light: #0c4a6e;
+  --color-accent: #818cf8;
+  --color-neutral-bg: #0b0f19;
+  --color-surface: #131b2e;
+  --color-surface-dim: #1e293b;
+  --color-surface-border: #223049;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-link: #38bdf8;
+  --color-link-hover: #7dd3fc;
+  --color-link-new: #f87171;
+  --color-link-new-hover: #fca5a5;
+  --color-status-diff-add: #34d399;
+  --color-status-diff-del: #f87171;
+
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  --max-content-width: 52rem;
+  --line-height-body: 1.65;
+}
+
 /* Box sizing reset & base styles */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -1078,6 +1118,53 @@ mark {
   letter-spacing: 0.04em;
   font-weight: 700;
   font-size: 0.8125rem;
+}
+
+/* Midnight Skin: Deep Slate Elegant Dark Reading Theme */
+[data-skin="midnight"] body {
+  line-height: var(--line-height-body);
+}
+
+[data-skin="midnight"] .site-header {
+  border-bottom: 1px solid var(--color-surface-border);
+  background-color: var(--color-surface);
+}
+
+[data-skin="midnight"] .brand {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-primary);
+}
+
+[data-skin="midnight"] h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+[data-skin="midnight"] .page-tabs a {
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.75rem;
+  border-bottom: none;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+[data-skin="midnight"] .page-tabs a[aria-current="page"] {
+  background-color: var(--color-surface-dim);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+[data-skin="midnight"] .btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-neutral-bg);
+  font-weight: 600;
+  border: none;
+}
+
+[data-skin="midnight"] .btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  color: var(--color-neutral-bg);
 }
 
 /* Revision diff & history compare */

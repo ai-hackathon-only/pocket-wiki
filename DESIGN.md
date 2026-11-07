@@ -168,7 +168,7 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 
 ## Visual Skins
 
-`pocket-wiki` provides three distinct visual identities. These are not merely color swaps; each skin defines distinct typography, density, and layout rules tailored to different reading modes. All three skins share identical semantic HTML and are implemented purely via CSS custom properties and contextual layout rules.
+`pocket-wiki` provides four distinct visual identities. These are not merely color swaps; each skin defines distinct typography, density, and layout rules tailored to different reading modes. All skins share identical semantic HTML and are implemented purely via CSS custom properties and contextual layout rules.
 
 ### 1. Paper (Default / Scholarly Reader)
 - **Who it is for:** Long-form readers, researchers, and writers who spend extended periods reading deep reference material.
@@ -182,11 +182,16 @@ Typography establishes an editorial hierarchy balancing literary body prose with
 - **Who it is for:** Designers, creatives, and modern web users seeking high-contrast graphic clarity and architectural structure.
 - **Why it looks this way:** Inspired by Swiss international typographic style and architectural studio journals. It uses clean neo-grotesque sans-serif typography (`-apple-system`, `Helvetica Neue`) throughout, with heavy 800-weight headings with negative tracking (`-0.03em`), bold 3px graphic underlines, and sharp 2px corners. The palette pairs stark cool off-white (`#f3f4f6`) with pure white cards and midnight ink text (`#111827`), accented by punchy cobalt blue (`#1d4ed8`). Metadata badges and tabs use bold uppercase lettering with letter-spacing.
 
+### 4. Midnight (Deep Slate Dark Reading)
+- **Who it is for:** Readers who want a dark theme for nighttime reading or OLED screens without technical monospace styling.
+- **Why it looks this way:** Uses a deep obsidian canvas (`#0b0f19`) paired with slate card surfaces (`#131b2e`), crisp system sans-serif prose (`-apple-system`), relaxed 1.65 line height, rounded pill tabs, and high-contrast sky blue accents (`#38bdf8`).
+
 ### The Zero-Flash Persistence Rule
-The user selects a skin via the dropdown in the header. The chosen skin (`paper`, `console`, or `atelier`) is persisted in `localStorage` under key `pocket-wiki-skin`. To prevent any flash of unstyled content or jarring theme shift on initial page load, a lightweight synchronous initializer script (`js/skin-init.js`) executes in `<head>` before the body is parsed, setting `data-skin` directly on `document.documentElement`.
+The user selects a skin via the dropdown in the header. The chosen skin (`paper`, `console`, `atelier`, or `midnight`) is persisted in `localStorage` under key `pocket-wiki-skin`. To prevent any flash of unstyled content or jarring theme shift on initial page load, a lightweight synchronous initializer script (`js/skin-init.js`) executes in `<head>` before the body is parsed, setting `data-skin` directly on `document.documentElement`.
 
 ### Accessibility & Contrast Compliance
-All three skins strictly meet WCAG AA contrast requirements (minimum 4.5:1 for normal text, 3:1 for large text and UI components):
+All skins strictly meet WCAG AA contrast requirements (minimum 4.5:1 for normal text, 3:1 for large text and UI components):
 - **Paper:** Text contrast 16.5:1 on background; link contrast 5.8:1; button contrast 8.1:1.
 - **Console:** Text contrast 15.8:1 on `#0d1117`; link contrast 5.4:1; primary accent contrast 6.8:1.
 - **Atelier:** Text contrast 14.8:1 on `#f3f4f6`; link contrast 6.2:1; button contrast 17.6:1.
+- **Midnight:** Text contrast 17.5:1 on `#0b0f19`; secondary text 6.5:1; link contrast 8.8:1; button contrast 8.8:1.
