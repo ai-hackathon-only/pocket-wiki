@@ -136,6 +136,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       <h1>Search</h1>
       ${specialNav()}
       <form class="special-search-form" id="special-search-page-form" role="search">
+        <label for="search-query-input" class="visually-hidden">Search wiki titles and text</label>
         <input type="search" name="q" id="search-query-input" value="${escapeHtml(q)}" placeholder="Search wiki titles and text..." required>
         <button type="submit">Search</button>
       </form>
@@ -162,6 +163,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       </div>
       <details class="export-details">
         <summary class="export-summary">Preview raw JSON</summary>
+        <label for="export-preview-area" class="visually-hidden">Preview raw JSON export</label>
         <textarea id="export-preview-area" class="export-textarea" readonly rows="12">${escapeHtml(jsonStr)}</textarea>
       </details>`;
   }
