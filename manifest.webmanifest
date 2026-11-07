@@ -1,0 +1,13 @@
+{
+  "name": "pocket-wiki",
+  "short_name": "pocket-wiki",
+  "description": "A small wiki that runs in your browser. Your pages stay on this device.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fcfbf9",
+  "theme_color": "#1b5e20",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
