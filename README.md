@@ -2,7 +2,7 @@
 
 A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that runs entirely inside your browser.
 
-🌐 **Live Demo:** [https://ai-hackathon-only.github.io/pocket-wiki/](https://ai-hackathon-only.github.io/pocket-wiki/)
+**Live Demo:** [https://ai-hackathon-only.github.io/pocket-wiki/](https://ai-hackathon-only.github.io/pocket-wiki/)
 
 ---
 
@@ -24,7 +24,8 @@ A fast, lightweight, serverless personal wiki engine inspired by MediaWiki that 
 index.html       ── Semantic application shell, strict CSP, root mount point
 css/style.css    ── Archival warmth design system (DESIGN.md)
 js/
-  app.js         ── Hash router (#/wiki/, #/edit/, #/history/, #/rev/, #/special/)
+  app.js         ── Hash router (#/wiki/, #/edit/, #/history/, #/diff/, #/rev/, #/special/)
+  diff.js        ── Dependency-free Myers diff between revisions
   storage.js     ── Unified localStorage persistence layer (pocket-wiki:v1)
   wikitext.js    ── XSS-safe wikitext parser & HTML sanitizer
   seed.js        ── Default starter articles (Main Page, Wikitext Guide, etc.)

@@ -6,7 +6,7 @@ export const SEED_PAGES = {
 '''pocket-wiki''' is a standalone personal wiki engine inspired by MediaWiki that runs entirely inside your web browser. There is no server, no account creation, and no cloud database: every page, revision, and edit summary lives safely within your browser's local storage.
 
 === Core Highlights ===
-* '''Local Sovereignty:''' Your notes and knowledge stay on your device under your complete control.
+* '''Your Pages Stay in This Browser:''' Your notes and knowledge stay on your device under your complete control.
 * '''Wikitext Authoring:''' Familiar wiki syntax including headings, bold, italic, internal wikilinks, and lists.
 * '''Full Revision History:''' Track changes over time with per-save edit summaries and past revision viewing.
 * '''Instant Portability:''' Export and backup your entire wiki into a single JSON file via [[Special:Export]], or restore an existing backup using [[Special:Import]].
@@ -15,7 +15,7 @@ export const SEED_PAGES = {
 === Explore Example Pages ===
 To discover how pocket-wiki works, explore these starter articles:
 * [[Wikitext Guide]] — Examples of formatting, headings, links, and lists.
-* [[Local Sovereignty]] — Privacy, offline persistence, and browser data storage.
+* [[Your Pages Stay in This Browser]] — Privacy, offline persistence, and browser data storage.
 * [[Architecture]] — How the hash router, storage module, and renderer function together.
 * [[Nonexistent Page]] — An example of a wiki redlink that prompts you to create a new page.
 
@@ -38,7 +38,7 @@ Headings structure your documents into clear thematic sections:
 === Links ===
 * '''Internal Wikilinks:''' Use double brackets like \`[[Main Page]]\` to link to [[Main Page]].
 * '''Piped Wikilinks:''' Provide custom link text with a pipe, like \`[[Architecture|System Architecture]]\` to display as [[Architecture|System Architecture]].
-* '''Redlinks:''' Links to pages that do not exist yet, such as [[Sandbox Article]], appear in distinct red. Clicking a redlink opens the editor to create that page immediately!
+* '''Redlinks:''' Links to pages that do not exist yet, such as [[Sandbox Article]], appear in distinct red. Clicking a redlink opens the editor to create that page.
 * '''External Links:''' Use single brackets with a space between URL and label, such as [https://github.com/ai-hackathon-only/pocket-wiki Project Repository]. Only secure \`http://\` and \`https://\` protocols are permitted.
 
 === Lists ===
@@ -52,10 +52,10 @@ Create ordered numbered lists using hash symbols:
 # Step two: Add an edit summary
 # Step three: Save the revision`,
 
-  'Local Sovereignty': `== Local Sovereignty & Privacy ==
-In modern web software, personal notes and knowledge bases are frequently locked inside proprietary clouds, vulnerable to subscription paywalls, server outages, and data mining.
+  'Your Pages Stay in This Browser': `== Your Pages Stay in This Browser ==
+Personal notes and knowledge bases are frequently locked inside proprietary clouds, vulnerable to subscription paywalls, server outages, and data mining.
 
-'''pocket-wiki''' is built on the principle of ''local data sovereignty'':
+'''pocket-wiki''' stores all data in your browser:
 # '''Browser-Native Storage:''' All content resides exclusively in your browser's \`localStorage\`.
 # '''Strict Isolation:''' The application enforces a strict Content Security Policy (CSP). It makes zero external network calls, loads zero remote fonts or analytics, and connects to no third-party APIs.
 # '''Complete Portability:''' You own your data. Use [[Special:Export]] at any time to download your entire wiki as a structured JSON file. You can import that JSON file into pocket-wiki on any other device or browser using [[Special:Import]].
@@ -69,10 +69,12 @@ pocket-wiki is designed around small, single-purpose ES modules following clean 
 * '''\`css/style.css\`''': Responsive design system specified in \`DESIGN.md\`, honoring archival warmth, single-column reading, and mobile 390px parity.
 * '''\`js/storage.js\`''': Encapsulates all \`localStorage\` interactions under key \`pocket-wiki:v1\`. Handles loading, saving, listing, revision history, and JSON export/import.
 * '''\`js/wikitext.js\`''': Lightweight wikitext parser that escapes raw HTML first before safely transforming headings, inline styles, wikilinks, and nested lists.
+* '''\`js/diff.js\`''': Dependency-free Myers diff on lines with prefix and suffix optimization.
 * '''\`js/app.js\`''': Hash-based client router supporting routes:
 ** \`#/wiki/:title\` — Read view
 ** \`#/edit/:title\` — Editor with required change summary
 ** \`#/history/:title\` — Full revision log
+** \`#/diff/:title/:oldId...:newId\` — Line diff between two revisions
 ** \`#/rev/:title/:id\` — Old revision view
 ** \`#/special/:name\` — Modular special pages
 * '''\`js/special.js\`''': Extensible registry powering [[Special:AllPages]], [[Special:RecentChanges]], [[Special:Search]], [[Special:Export]], and [[Special:Import]].`
