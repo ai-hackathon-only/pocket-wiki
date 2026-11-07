@@ -265,7 +265,6 @@ export function seedIfEmpty(store) {
         }
       }
       if (typeof localStorage !== 'undefined' && !localStorage.getItem('pocket_wiki_seed_articles_v1')) {
-        localStorage.setItem('pocket_wiki_seed_articles_v1', '1');
         const popularTitles = [
           'James Webb Space Telescope', 'Artemis Program', 'Large Language Models',
           'Mars Perseverance Rover', '2024 Summer Olympics', 'Electric Vehicles',
@@ -276,6 +275,7 @@ export function seedIfEmpty(store) {
             store.save(title, SEED_PAGES[title], 'Add popular starter article');
           }
         }
+        localStorage.setItem('pocket_wiki_seed_articles_v1', '1');
       }
     } catch (_) {
       // ignore storage access errors
