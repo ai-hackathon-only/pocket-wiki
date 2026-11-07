@@ -1,5 +1,9 @@
 // Serverless page sharing module: compress page data into URL token and decompress it back.
 // Uses web standard CompressionStream/DecompressionStream (deflate) with safe base64url encoding.
+import { normalizeTitle } from './storage.js';
+
+export const MAX_TEXT_SIZE = 100 * 1024; // 100 KB limit for link sharing
+export const MAX_TOKEN_LEN = 150 * 1024; // 150 KB limit for URL tokens
 
 export function bytesToBase64Url(bytes) {
   let binary = '';
@@ -22,6 +26,9 @@ export function base64UrlToBytes(str) {
 }
 
 export async function compressPageData(payload) {
+  if (payload.text && typeof payload.text === 'string' && payload.text.length > MAX_TEXT_SIZE) {
+    throw new Error('Page text exceeds the 100 KB limit for link sharing.');
+  }
   const jsonStr = JSON.stringify(payload);
   if (typeof CompressionStream !== 'undefined') {
     const cs = new CompressionStream('deflate');
@@ -52,6 +59,9 @@ export async function decompressPageData(token) {
   if (!token || typeof token !== 'string') {
     throw new Error('Missing or empty share token');
   }
+  if (token.length > MAX_TOKEN_LEN) {
+    throw new Error('Share link exceeds maximum allowed length.');
+  }
 
   let jsonStr = '';
   if (token.startsWith('d.')) {
@@ -63,12 +73,17 @@ export async function decompressPageData(token) {
       writer.close();
       const reader = ds.readable.getReader();
       const chunks = [];
+      let total = 0;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        total += value.length;
+        if (total > MAX_TEXT_SIZE * 2) {
+          try { await reader.cancel(); } catch {}
+          throw new Error('Decompressed data exceeds maximum allowed size (100 KB).');
+        }
         chunks.push(value);
       }
-      const total = chunks.reduce((acc, c) => acc + c.length, 0);
       const out = new Uint8Array(total);
       let off = 0;
       for (const c of chunks) {
@@ -81,6 +96,9 @@ export async function decompressPageData(token) {
     }
   } else if (token.startsWith('r.')) {
     const raw = base64UrlToBytes(token.slice(2));
+    if (raw.length > MAX_TEXT_SIZE * 2) {
+      throw new Error('Shared data exceeds maximum allowed size (100 KB).');
+    }
     jsonStr = new TextDecoder().decode(raw);
   } else {
     throw new Error('Unrecognized or invalid share link format.');
@@ -97,11 +115,27 @@ export async function decompressPageData(token) {
     throw new Error('Shared link does not contain valid page data.');
   }
 
+  if (parsed.text.length > MAX_TEXT_SIZE) {
+    throw new Error('Shared page text exceeds maximum allowed size (100 KB).');
+  }
+
+  const normTitle = normalizeTitle(parsed.title);
+  if (!normTitle || normTitle.startsWith('Special:')) {
+    throw new Error('Shared page title is invalid or reserved.');
+  }
+
+  let ts = new Date().toISOString();
+  if (typeof parsed.ts === 'string' && !isNaN(Date.parse(parsed.ts))) {
+    ts = parsed.ts;
+  } else if (typeof parsed.ts === 'number' && !isNaN(parsed.ts)) {
+    ts = new Date(parsed.ts).toISOString();
+  }
+
   return {
-    title: parsed.title.trim(),
+    title: normTitle,
     text: parsed.text,
-    ts: typeof parsed.ts === 'number' ? parsed.ts : Date.now(),
-    summary: typeof parsed.summary === 'string' ? parsed.summary : 'Shared page import'
+    ts,
+    summary: typeof parsed.summary === 'string' ? parsed.summary.trim() : 'Shared page import'
   };
 }
 

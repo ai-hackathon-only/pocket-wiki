@@ -85,20 +85,26 @@ function sharePage(title) {
   if (!store.exists(title)) {
     return `<h1>Share ${escapeHtml(title)}</h1>${tabs(title, 'share')}<p class="notice">This page does not exist yet, so there is nothing to share.</p>`;
   }
+  const rev = store.load(title);
+  const isOversized = rev && rev.text.length > 100 * 1024;
   return `<h1>Share ${escapeHtml(title)}</h1>${tabs(title, 'share')}
     <div class="share-page">
       <p>Share this page directly without a server. Anyone opening the link receives a compressed copy of the latest version and can import it into their browser.</p>
-      <div class="share-box">
-        <label for="share-url-input">Shareable link</label>
-        <div class="share-url-row">
-          <input id="share-url-input" type="text" readonly value="Generating link..." aria-label="Shareable link">
-          <button id="btn-copy-share" type="button">Copy link</button>
+      ${isOversized ? `
+        <p class="notice" role="alert"><strong>Page too large:</strong> This page is ${(rev.text.length / 1024).toFixed(0)} KB. Serverless link sharing is limited to pages under 100 KB so links are not truncated by browsers or chat apps. Use JSON Export from Special:AllPages to share large pages.</p>
+      ` : `
+        <div class="share-box">
+          <label for="share-url-input">Shareable link</label>
+          <div class="share-url-row">
+            <input id="share-url-input" type="text" readonly value="Generating link..." aria-label="Shareable link">
+            <button id="btn-copy-share" type="button">Copy link</button>
+          </div>
+          <p id="share-copy-status" role="status" class="notice" hidden></p>
+          <div class="share-details" id="share-details" hidden>
+            <span class="share-metric" id="share-token-metric"></span>
+          </div>
         </div>
-        <p id="share-copy-status" role="status" class="notice" hidden></p>
-        <div class="share-details" id="share-details" hidden>
-          <span class="share-metric" id="share-token-metric"></span>
-        </div>
-      </div>
+      `}
     </div>`;
 }
 
@@ -275,9 +281,13 @@ function route() {
         contentEl.hidden = false;
         document.getElementById('btn-import-confirm')?.addEventListener('click', () => {
           try {
-            store.save(data.title, data.text, 'Imported from shared link');
-            flash = `Imported "${data.title}" successfully into your wiki.`;
-            location.hash = pageHref(data.title);
+            const cleanTitle = store.normalizeTitle(data.title);
+            if (!cleanTitle || cleanTitle.startsWith('Special:')) {
+              throw new Error('Choose a valid page title. Special pages cannot be imported.');
+            }
+            store.save(cleanTitle, data.text, 'Imported from shared link');
+            flash = `Imported "${cleanTitle}" successfully into your wiki.`;
+            location.hash = pageHref(cleanTitle);
           } catch (err) {
             alert('Failed to import page: ' + (err && err.message || err));
           }
@@ -362,7 +372,11 @@ function route() {
           input.value = url;
           if (metric && details) {
             const origBytes = new TextEncoder().encode(rev.text).length;
-            metric.textContent = `Payload compressed from ${origBytes} bytes to ${token.length} chars.`;
+            let note = `Payload compressed from ${origBytes.toLocaleString()} bytes to ${token.length.toLocaleString()} chars.`;
+            if (url.length > 32768) {
+              note += ' Note: This link is longer than 32 KB and may be truncated by some chat apps or browsers.';
+            }
+            metric.textContent = note;
             details.hidden = false;
           }
         } catch (err) {
