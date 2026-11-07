@@ -29,6 +29,15 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 - [ ] `impeccable detect` on `main` reports 0 findings, or every remaining finding is listed in DESIGN.md with the reason it stays.
 - [ ] Every agent posted its retro, and a `Retro` discussion exists.
 
+**Goals added during the event (10:45, by the owner, because the first list was almost done):**
+- [ ] Diff between two revisions (moved up from Stretch).
+- [ ] Rename and delete a page (moved up from Stretch); links to a renamed page keep working or turn red, never break silently.
+- [ ] Installable and offline: a web app manifest and a service worker, so pocket-wiki can be installed and opens with no network after the first visit (check: load once, go offline, reload).
+- [ ] Accessibility to WCAG AA: every action works by keyboard alone in a sensible focus order, visible focus, labelled controls and landmarks, contrast AA (check with impeccable `audit` and a keyboard-only walk-through noted in the PR).
+- [ ] Robustness: full localStorage shows a clear message and loses no data; a malformed or hostile import file is rejected with a message; a 1 MB page and a wiki of 500 pages still work (evidence in the PR: how you generated them, what happened).
+- [ ] Speed: search over 500 pages returns in under 100 ms on a normal laptop (measure and note the number).
+- [ ] Plain language: all user-facing text (seed pages, README, UI labels, messages) passes `SKILLS/de-ai/` (no FIX hits left without a reason); no marketing words like "sovereignty" or "seamless".
+
 ## Constraints
 - Language / stack: plain HTML, CSS and JavaScript ES modules. No build step, no dependencies, no frameworks, no CDNs, no network calls at runtime. The site root (`index.html` on `main`) is what GitHub Pages serves.
 - Storage: localStorage behind one small storage module (load / save / list / history), so it could move to IndexedDB later.
@@ -38,11 +47,12 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 - Licence of the output: code MIT; wiki content (seed pages) CC BY-SA 4.0. Say both in README.md.
 
 ## Stretch (only if done early and when_done_early = stretch)
-1. Diff between two revisions.
-2. Categories: `[[Category:X]]` on a page, and a category page listing its members.
-3. Sync between open tabs (the `storage` event).
-4. Rename and delete a page.
-5. Import one Wikipedia article (pasted wikitext, not fetched) with CC BY-SA attribution.
+1. Share one page without a server: a link that carries the page compressed in the URL (opening it offers to import the page); optional QR code drawn in plain JS.
+2. Talk pages (`Talk:X`) and a "What links here" special page.
+3. Simple templates (`{{Name}}` includes another page) and wikitext tables (`{| |}`).
+4. Categories: `[[Category:X]]` on a page, and a category page listing its members.
+5. Sync between open tabs (the `storage` event).
+6. Import one Wikipedia article (pasted wikitext, not fetched) with CC BY-SA attribution.
 
 ```yaml
 ai-hackathon:
