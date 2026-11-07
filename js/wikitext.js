@@ -100,11 +100,10 @@ export function expandTemplates(text, load, normalize = t => t.trim(), seen = []
 }
 
 export function render(text, { exists = () => true, normalize = t => t.trim(), load = null } = {}) {
-  if (load) text = expandTemplates(text, load, normalize);
   const catRegex = /\[\[(?!\s*:)Category:\s*([^\[\]|]+?)\s*(?:\|[^\[\]]*)?\]\]/gi;
   const categories = [];
   const seenCats = new Set();
-  const cleanedText = String(text || '').replace(catRegex, (m, raw) => {
+  let cleanedText = String(text || '').replace(catRegex, (m, raw) => {
     const name = raw.trim();
     const norm = name ? name[0].toUpperCase() + name.slice(1) : '';
     if (norm && !seenCats.has(norm.toLowerCase())) {
@@ -113,6 +112,8 @@ export function render(text, { exists = () => true, normalize = t => t.trim(), l
     }
     return '';
   });
+
+  if (load) cleanedText = expandTemplates(cleanedText, load, normalize);
 
   const lines = escapeHtml(cleanedText.replace(/\u0000/g, '')).replace(/\r\n?/g, '\n').split('\n');
   const out = [];

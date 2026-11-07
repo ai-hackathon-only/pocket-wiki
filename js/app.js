@@ -72,7 +72,7 @@ function viewPage(title, noRedirect) {
         <h2>Pages in category &ldquo;${escapeHtml(catName)}&rdquo;</h2>
         ${count === 0
           ? '<p class="notice">This category currently contains no pages.</p>'
-          : `<p class="category-count">The following ${count} page${count === 1 ? '' : 's are'} in this category:</p>
+          : `<p class="category-count">${count === 1 ? 'The following page is in this category:' : `The following ${count} pages are in this category:`}</p>
              <ul class="category-list">
                ${catMembers.map(m => `<li><a class="wikilink" href="${pageHref(m)}">${escapeHtml(m)}</a></li>`).join('')}
              </ul>`

@@ -20,9 +20,13 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
     if (cats.length === 0) {
       body = '<p class="notice">No categories exist yet. Add <code>[[Category:Name]]</code> to any page to categorise it.</p>';
     } else {
-      const items = cats.map(c =>
-        `<li><a class="wikilink" href="${pageHref('Category:' + c.name)}">${escapeHtml(c.name)}</a> <span class="category-member-count">(${c.count} page${c.count === 1 ? '' : 's'})</span></li>`
-      ).join('');
+      const items = cats.map(c => {
+        const catTitle = 'Category:' + c.name;
+        const pageExists = store.exists(catTitle);
+        const cls = pageExists ? 'wikilink' : 'wikilink new';
+        const tip = pageExists ? catTitle : catTitle + ' (page does not exist)';
+        return `<li><a class="${cls}" href="${pageHref(catTitle)}" title="${escapeHtml(tip)}">${escapeHtml(c.name)}</a> <span class="category-member-count">(${c.count} page${c.count === 1 ? '' : 's'})</span></li>`;
+      }).join('');
       body = `<p class="allpages-summary">Total categories: <strong>${cats.length}</strong></p>
               <ul class="allpages-list">${items}</ul>`;
     }

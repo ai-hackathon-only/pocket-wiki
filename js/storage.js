@@ -210,6 +210,13 @@ export function getCategoryMembers(categoryName) {
 export function getAllCategories() {
   const pages = read().pages;
   const catMap = new Map();
+  for (const title of Object.keys(pages)) {
+    if (title.startsWith('Category:')) {
+      const sub = title.slice(9).trim();
+      const norm = sub ? sub[0].toUpperCase() + sub.slice(1) : '';
+      if (norm) catMap.set(norm, 0);
+    }
+  }
   const re = /\[\[(?!\s*:)Category:\s*([^\[\]|]+?)\s*(?:\|[^\[\]]*)?\]\]/gi;
   for (const page of Object.values(pages)) {
     const lastRev = page.revisions[page.revisions.length - 1];
