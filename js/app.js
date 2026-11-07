@@ -111,3 +111,8 @@ seedIfEmpty(store);
 // Load optional special pages, then start routing.
 import('./special.js').then(m => m.register?.(specials, { store, renderText, escapeHtml, pageHref, fmtTime }))
   .catch(() => {}).finally(() => { window.addEventListener('hashchange', route); route(); });
+
+// Offline support: the service worker caches the app files after the first visit.
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('./sw.js').catch(err => console.warn('Service worker not registered:', err));
+}

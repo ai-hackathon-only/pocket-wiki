@@ -47,6 +47,10 @@ python3 -m http.server 8000
 
 Open `http://localhost:8000` in any modern web browser.
 
+### Offline and install
+
+After the first visit, a service worker (`sw.js`) keeps a copy of the app files, so pocket-wiki opens with no network. `manifest.webmanifest` lets browsers install it as an app. When you change any file listed in `sw.js`, bump `CACHE` in `sw.js` (for example `pocket-wiki-v2`), or returning visitors keep the old copy.
+
 ---
 
 ## AI Hackathon
