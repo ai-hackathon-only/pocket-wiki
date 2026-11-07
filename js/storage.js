@@ -6,8 +6,23 @@ const KEY = 'pocket-wiki:v1';
 // exists()/load() call made link rendering and search slow, so we parse once
 // and drop the copy on every write and when another tab changes storage.
 let cache = null;
+const subscribers = new Set();
+
 if (typeof window !== 'undefined') {
-  window.addEventListener('storage', e => { if (e.key === KEY || e.key === null) cache = null; });
+  window.addEventListener('storage', e => {
+    if (e.key === KEY || e.key === null) {
+      cache = null;
+      for (const fn of subscribers) {
+        try { fn(e); } catch (err) { console.error(err); }
+      }
+    }
+  });
+}
+
+// Subscribe to storage changes made by other tabs.
+export function subscribe(fn) {
+  subscribers.add(fn);
+  return () => subscribers.delete(fn);
 }
 
 function read() {
