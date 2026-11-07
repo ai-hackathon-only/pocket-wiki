@@ -1,7 +1,8 @@
 // pocket-wiki — Early skin initializer to prevent visual flash before first paint
 (function () {
   try {
-    const skin = localStorage.getItem('pocket-wiki-skin') || 'paper';
+    const params = new URLSearchParams(window.location.search);
+    const skin = params.get('skin') || localStorage.getItem('pocket-wiki-skin') || 'paper';
     if (skin === 'console' || skin === 'atelier') {
       document.documentElement.setAttribute('data-skin', skin);
     } else {
