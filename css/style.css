@@ -1433,3 +1433,41 @@ mark {
   padding: var(--space-md);
   margin-bottom: var(--space-lg);
 }
+
+/* Wikitext tables ({| |}). Colours come from the skin's custom properties. */
+.wiki-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: var(--space-md) 0;
+}
+
+.wiki-table-wrap:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.wikitable {
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.wikitable caption {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: var(--space-xs);
+  color: var(--color-text-primary);
+}
+
+.wikitable th,
+.wikitable td {
+  border: 1px solid var(--color-surface-border);
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+  vertical-align: top;
+}
+
+.wikitable th {
+  background: var(--color-surface-dim);
+  font-weight: 600;
+}
