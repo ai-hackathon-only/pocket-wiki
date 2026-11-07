@@ -68,6 +68,56 @@ export function save(title, text, summary) {
   return rev;
 }
 
+// Move a page and all its revisions to a new title, adding one revision that records the move.
+// With leaveRedirect, the old title becomes a one-line redirect page so old links keep working;
+// without it, links to the old title turn red.
+export function rename(from, to, summary, leaveRedirect = true) {
+  const data = read();
+  const f = normalizeTitle(from), t = normalizeTitle(to);
+  if (!data.pages[f]) throw new Error(`There is no page called "${f}".`);
+  if (!t || t.startsWith('Special:')) throw new Error('Choose a valid new title.');
+  if (t === f) throw new Error('The new title is the same as the old one.');
+  // A target that is only a redirect back to the source (left by an earlier rename) may be replaced, so a rename can be undone.
+  const existing = data.pages[t];
+  if (existing && !(existing.revisions.length === 1 && redirectTarget(existing.revisions[0].text) === f)) {
+    throw new Error(`A page called "${t}" already exists. Rename or delete it first.`);
+  }
+  const page = data.pages[t] = data.pages[f];
+  delete data.pages[f];
+  const ts = new Date().toISOString();
+  const last = page.revisions[page.revisions.length - 1];
+  const note = `Renamed from ${f}` + (summary ? `: ${summary}` : '');
+  page.revisions.push({ id: page.revisions.length + 1, ts, text: last.text, summary: note });
+  // Point older redirects at the new title, so A -> B -> C never leaves a two-hop chain.
+  for (const [name, p] of Object.entries(data.pages)) {
+    const r = p.revisions[p.revisions.length - 1];
+    if (name !== t && redirectTarget(r.text) === f) {
+      p.revisions.push({ id: p.revisions.length + 1, ts, text: `#REDIRECT [[${t}]]`, summary: `Redirect now points to ${t} after rename` });
+    }
+  }
+  if (leaveRedirect) {
+    data.pages[f] = { revisions: [{ id: 1, ts, text: `#REDIRECT [[${t}]]`, summary: `Redirect to ${t} after rename` }] };
+  }
+  write(data);
+  return t;
+}
+
+// Delete a page and its history. Links to it turn red.
+export function remove(title) {
+  const data = read();
+  const t = normalizeTitle(title);
+  if (!data.pages[t]) return false;
+  delete data.pages[t];
+  write(data);
+  return true;
+}
+
+// Target title if this text is a redirect page ("#REDIRECT [[Target]]"), else null.
+export function redirectTarget(text) {
+  const m = /^\s*#REDIRECT\s*\[\[([^\]|]+)(?:\|[^\]]*)?\]\]/i.exec(String(text || ''));
+  return m ? normalizeTitle(m[1]) : null;
+}
+
 // All page titles, sorted.
 export function list() {
   return Object.keys(read().pages).sort((a, b) => a.localeCompare(b));
