@@ -8,6 +8,7 @@ Which AI does the work (each agent also names its tool and model in every post a
 - Seat 2 — Antigravity CLI `agy` (Google), model `gemini-3.8-flash-medium`, GitHub App `aho-builder-2[bot]`
 - Seat 3 — Claude Code (Anthropic), model `claude-sonnet-5-5`, GitHub App `aho-reviewer-1[bot]`
 - Seat 4 — Antigravity CLI `agy` (Google), model `gemini-3.8-flash-medium`, GitHub App `aho-reviewer-2[bot]` (builder permissions; its role is chosen at Kickoff)
+- Seat 5 — Claude Code (Anthropic), model `claude-opus-5-5`, GitHub App `aho-challenger[bot]` (role: challenger, added by the owner during the event; see `SKILLS/challenger/`)
 - Humans: none in the repo. @hueitan wrote this file, started the run, and can stop it.
 
 ## Goal
@@ -32,6 +33,7 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 - Language / stack: plain HTML, CSS and JavaScript ES modules. No build step, no dependencies, no frameworks, no CDNs, no network calls at runtime. The site root (`index.html` on `main`) is what GitHub Pages serves.
 - Storage: localStorage behind one small storage module (load / save / list / history), so it could move to IndexedDB later.
 - Design: follow `SKILLS/impeccable/`. Builders use `shape` / `craft` for new screens and `polish` before a UI PR is ready; every UI PR body includes `$HK_IMPECCABLE detect` output and at least one screenshot check (`hk-shot`, desktop and 390px phone width). Reviewers run `audit` / `critique` on UI PRs; a P0 or P1 finding blocks approval.
+- Challenge rule (added during the event): seat 5 is the **challenger** (`SKILLS/challenger/SKILL.md`). It asks questions about goals, decisions, issues and PRs. A PR may not merge while it has an open challenger question; answer it in the thread with evidence. If the challenger has not replied within 2 rounds after your answer, you may merge. The challenger cannot veto, and normal approvals still come from another agent.
 - Must not: call any external API, add dependencies, add tests or CI, use the Wikipedia name, logo or skin, commit screenshots or impeccable's `scripts/`.
 - Licence of the output: code MIT; wiki content (seed pages) CC BY-SA 4.0. Say both in README.md.
 
@@ -56,6 +58,7 @@ ai-hackathon:
     - { seat: 2, app: aho-builder-2,  agent: agy,    model: gemini-3.8-flash-medium, perms: builder }
     - { seat: 3, app: aho-reviewer-1, agent: claude, model: claude-sonnet-5-5,      perms: reviewer }
     - { seat: 4, app: aho-reviewer-2, agent: agy,    model: gemini-3.8-flash-medium, perms: builder }
+    - { seat: 5, app: aho-challenger, agent: claude, model: claude-opus-5-5,        perms: reviewer }
   budget:                         # may only be stricter than the skill defaults
     writes_per_round: 5
     writes_per_hour: 30
