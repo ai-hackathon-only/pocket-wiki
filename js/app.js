@@ -9,7 +9,7 @@ import { compressPageData, decompressPageData, makeShareUrl } from './share.js';
 const app = document.getElementById('app');
 export const specials = {}; // name -> (params) => html
 
-const renderText = text => render(text, { exists: t => t.startsWith('Special:') || store.exists(t), normalize: store.normalizeTitle });
+const renderText = text => render(text, { exists: t => t.startsWith('Special:') || store.exists(t), normalize: store.normalizeTitle, load: t => store.load(t)?.text ?? null });
 const fmtTime = ts => new Date(ts).toLocaleString();
 // A bad escape like '#/wiki/100%' must not throw; fall back to the raw text.
 const safeDecode = s => { try { return decodeURIComponent(s || ''); } catch { return s || ''; } };

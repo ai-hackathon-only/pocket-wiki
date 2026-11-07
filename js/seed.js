@@ -80,7 +80,29 @@ Ordered numbered lists start with a number sign:
 ## Sub-step
 
 === Paragraphs ===
-Blank lines separate paragraphs. All raw HTML tags like \`<script>\` or \`<div>\` are automatically escaped for safety.`,
+Blank lines separate paragraphs. All raw HTML tags like \`<script>\` or \`<div>\` are automatically escaped for safety.
+
+=== Tables ===
+A table starts with a line \`{|\` and ends with \`|}\`. \`|+\` adds a caption, \`|-\` starts a row, \`!\` starts header cells (\`!!\` between them) and \`|\` starts data cells (\`||\` between them).
+{|
+|+ Markup for tables
+! Line starts with !! Meaning
+|-
+| {| || Start of the table
+|-
+| |- || New row
+|-
+| ! || Header cells
+|-
+| pipe || Data cells
+|}
+
+=== Templates ===
+A page name inside double curly braces includes that page from the Template namespace. Writing Note inside double curly braces includes [[Template:Note]], like this:
+{{Note}}
+Put a colon before the name to include a normal page instead. A template that does not exist shows as a red link.`,
+
+  'Template:Note': `'''Note:''' this box comes from [[Template:Note]]. Edit that page and every page that uses it changes.`,
 
   'Your Pages Stay in This Browser': `== Your Pages Stay in This Browser ==
 pocket-wiki stores all page revisions directly inside your browser's \`localStorage\`.
