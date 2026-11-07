@@ -11,31 +11,6 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       <a href="#/special/Import">Import</a>
     </nav>`;
 
-  // Helper to extract query from URLSearchParams or location.hash safely
-  function extractSearchQuery(params) {
-    let q = (params && params.get('q')) || '';
-    // If the hash contains an encoded or unencoded search string in #/special/Search/...
-    // app.js splits on '/' so param segment is after #/special/Search/
-    const match = (typeof location !== 'undefined' && location.hash)
-      ? location.hash.match(/#\/special\/Search\/(.+)$/)
-      : null;
-
-    if (match) {
-      try {
-        const decodedSegment = decodeURIComponent(match[1]);
-        if (decodedSegment.startsWith('q=')) {
-          const val = decodedSegment.slice(2);
-          try {
-            const doubleDecoded = decodeURIComponent(val);
-            if (doubleDecoded !== val) return doubleDecoded.trim();
-          } catch {}
-          return val.trim();
-        }
-      } catch {}
-    }
-    return q.trim();
-  }
-
   // --- Special:AllPages ---
   function allPagesPage() {
     const titles = store.list();
@@ -77,7 +52,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
 
   // --- Special:Search ---
   function searchPage(params) {
-    const q = extractSearchQuery(params);
+    const q = ((params && params.get('q')) || '').trim();
     const qLower = q.toLowerCase();
 
     let resultsHtml = '';
@@ -241,7 +216,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
         e.preventDefault();
         const input = e.target.querySelector('input[name="q"]');
         const q = (input ? input.value : '').trim();
-        location.hash = '#/special/Search/' + encodeURIComponent('q=' + encodeURIComponent(q));
+        location.hash = '#/special/Search/q=' + encodeURIComponent(q);
       } else if (e.target.id === 'special-import-form') {
         e.preventDefault();
         handleImportSubmit(e.target);
