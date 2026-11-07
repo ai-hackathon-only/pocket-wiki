@@ -7,6 +7,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
       <a href="#/special/AllPages">All pages</a> &bull;
       <a href="#/special/RecentChanges">Recent changes</a> &bull;
       <a href="#/special/Search">Search</a> &bull;
+      <a href="#/special/WhatLinksHere">What links here</a> &bull;
       <a href="#/special/Export">Export</a> &bull;
       <a href="#/special/Import">Import</a>
     </nav>`;
@@ -194,10 +195,87 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
+  // --- Special:WhatLinksHere ---
+  function whatLinksHerePage(params, rawSubpath) {
+    const targetParam = params?.get('target');
+    let rawTarget = targetParam !== null && targetParam !== undefined ? targetParam : (rawSubpath || '');
+    if (rawTarget.startsWith('target=')) {
+      rawTarget = rawTarget.slice(7);
+    }
+    const target = rawTarget.replace(/_/g, ' ').trim();
+    let body = `
+      <form class="whatlinkshere-form" id="special-whatlinkshere-form" role="search" aria-label="What links here search">
+        <label for="whatlinkshere-target">Page title:</label>
+        <div class="whatlinkshere-input-row">
+          <input id="whatlinkshere-target" name="target" type="text" value="${escapeHtml(target)}" placeholder="Enter page title">
+          <button type="submit">Show links</button>
+        </div>
+      </form>`;
+
+    if (!target) {
+      body += '<p class="notice">Enter a page title above to see which pages link to it.</p>';
+      return `<h1>What Links Here</h1>${specialNav()}${body}`;
+    }
+
+    const normTarget = store.normalizeTitle(target);
+    const targetExists = store.exists(normTarget);
+    const allTitles = store.list();
+    const referringPages = [];
+
+    for (const t of allTitles) {
+      if (t === normTarget) continue;
+      const rev = store.load(t);
+      if (!rev || !rev.text) continue;
+
+      const redirTarget = store.redirectTarget(rev.text);
+      if (redirTarget === normTarget) {
+        referringPages.push({ title: t, isRedirect: true });
+        continue;
+      }
+
+      const linkRegex = /\[\[([^\[\]|]+)(?:\|[^\[\]]*)?\]\]/g;
+      let m;
+      let linksToTarget = false;
+      while ((m = linkRegex.exec(rev.text)) !== null) {
+        if (store.normalizeTitle(m[1]) === normTarget) {
+          linksToTarget = true;
+          break;
+        }
+      }
+      if (linksToTarget) {
+        referringPages.push({ title: t, isRedirect: false });
+      }
+    }
+
+    const targetLink = `<a class="${targetExists ? 'wikilink' : 'wikilink new'}" href="${pageHref(normTarget)}">${escapeHtml(normTarget)}</a>${targetExists ? '' : ' (page does not exist)'}`;
+
+    if (referringPages.length === 0) {
+      body += `<div class="whatlinkshere-results">
+        <h2>Pages linking to ${targetLink}</h2>
+        <p class="notice">No pages link to <strong>${escapeHtml(normTarget)}</strong>.</p>
+      </div>`;
+    } else {
+      const items = referringPages.map(item => `
+        <li class="whatlinkshere-item">
+          <a class="wikilink" href="${pageHref(item.title)}">${escapeHtml(item.title)}</a>
+          ${item.isRedirect ? ' <span class="whatlinkshere-redirect">(redirect page)</span>' : ''}
+        </li>
+      `).join('');
+      body += `<div class="whatlinkshere-results">
+        <h2>Pages linking to ${targetLink}</h2>
+        <p class="whatlinkshere-count">Found <strong>${referringPages.length}</strong> page(s) linking here:</p>
+        <ul class="whatlinkshere-list">${items}</ul>
+      </div>`;
+    }
+
+    return `<h1>What Links Here</h1>${specialNav()}${body}`;
+  }
+
   // Register special page renderers
   specials['AllPages'] = allPagesPage;
   specials['RecentChanges'] = recentChangesPage;
   specials['Search'] = searchPage;
+  specials['WhatLinksHere'] = whatLinksHerePage;
   specials['Export'] = exportPage;
   specials['Import'] = importPage;
 
@@ -205,6 +283,7 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
   specials['allpages'] = allPagesPage;
   specials['recentchanges'] = recentChangesPage;
   specials['search'] = searchPage;
+  specials['whatlinkshere'] = whatLinksHerePage;
   specials['export'] = exportPage;
   specials['import'] = importPage;
 
@@ -219,6 +298,11 @@ export function register(specials, { store, renderText, escapeHtml, pageHref, fm
         const input = e.target.querySelector('input[name="q"]');
         const q = (input ? input.value : '').trim();
         location.hash = '#/special/Search/q=' + encodeURIComponent(q);
+      } else if (e.target.id === 'special-whatlinkshere-form') {
+        e.preventDefault();
+        const input = e.target.querySelector('input[name="target"]');
+        const q = (input ? input.value : '').trim();
+        location.hash = '#/special/WhatLinksHere/' + encodeURIComponent(q.replace(/ /g, '_'));
       } else if (e.target.id === 'special-import-form') {
         e.preventDefault();
         handleImportSubmit(e.target);

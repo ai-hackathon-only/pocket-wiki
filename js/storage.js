@@ -14,7 +14,19 @@ function read() {
   if (cache) return cache;
   try {
     const data = JSON.parse(localStorage.getItem(KEY));
-    if (data && typeof data === 'object' && data.pages && typeof data.pages === 'object') return (cache = data);
+    if (data && typeof data === 'object' && data.pages && typeof data.pages === 'object') {
+      let migrated = false;
+      for (const k of Object.keys(data.pages)) {
+        const norm = normalizeTitle(k);
+        if (norm && norm !== k && !data.pages[norm]) {
+          data.pages[norm] = data.pages[k];
+          delete data.pages[k];
+          migrated = true;
+        }
+      }
+      if (migrated) write(data);
+      return (cache = data);
+    }
   } catch { /* fall through to empty */ }
   return (cache = { pages: {} });
 }
@@ -45,7 +57,12 @@ function write(data) {
 
 export function normalizeTitle(title) {
   const t = String(title || '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
-  return t ? t[0].toUpperCase() + t.slice(1) : '';
+  if (!t) return '';
+  if (t.toLowerCase().startsWith('talk:')) {
+    const sub = t.slice(5).trim();
+    return 'Talk:' + (sub ? sub[0].toUpperCase() + sub.slice(1) : '');
+  }
+  return t[0].toUpperCase() + t.slice(1);
 }
 
 export function exists(title) {
@@ -100,6 +117,27 @@ export function rename(from, to, summary, leaveRedirect = true) {
   }
   if (leaveRedirect) {
     data.pages[f] = { revisions: [{ id: 1, ts, text: `#REDIRECT [[${t}]]`, summary: `Redirect to ${t} after rename` }] };
+  }
+  // If moving an article, also move its associated talk page if one exists
+  if (!f.startsWith('Talk:') && !t.startsWith('Talk:')) {
+    const talkFrom = `Talk:${f}`;
+    const talkTo = `Talk:${t}`;
+    if (data.pages[talkFrom] && !data.pages[talkTo]) {
+      const talkPage = (data.pages[talkTo] = data.pages[talkFrom]);
+      delete data.pages[talkFrom];
+      const talkLast = talkPage.revisions[talkPage.revisions.length - 1];
+      talkPage.revisions.push({
+        id: talkPage.revisions.length + 1,
+        ts,
+        text: talkLast.text,
+        summary: `Renamed from ${talkFrom}` + (summary ? `: ${summary}` : '')
+      });
+      if (leaveRedirect) {
+        data.pages[talkFrom] = {
+          revisions: [{ id: 1, ts, text: `#REDIRECT [[${talkTo}]]`, summary: `Redirect to ${talkTo} after rename` }]
+        };
+      }
+    }
   }
   write(data);
   return t;
