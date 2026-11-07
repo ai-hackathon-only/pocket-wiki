@@ -38,6 +38,9 @@ Not Wikipedia: don't use the name "Wikipedia", its logo, or its look (Vector ski
 - [ ] Speed: search over 500 pages returns in under 100 ms on a normal laptop (measure and note the number).
 - [ ] Plain language: all user-facing text (seed pages, README, UI labels, messages) passes `SKILLS/de-ai/` (no FIX hits left without a reason); no marketing words like "sovereignty" or "seamless".
 
+**Goal added during the event (10:50, by the owner):**
+- [ ] Three skins: define three clearly different visual identities for pocket-wiki (not just colour swaps: type, layout and density should differ), each with its own name and a short section in DESIGN.md saying who it is for and why it looks that way. The reader switches skins from the UI; the choice is saved in the browser and applied before first paint (no flash). Same HTML for all three: skins are CSS only (one file or one set of custom properties per skin), no build step. Every skin meets the WCAG AA goal above, passes `impeccable detect`, and has desktop + 390px screenshots in its PR. Don't copy MediaWiki's skins (Vector, MonoBook, Timeless) or Wikipedia's look.
+
 ## Constraints
 - Language / stack: plain HTML, CSS and JavaScript ES modules. No build step, no dependencies, no frameworks, no CDNs, no network calls at runtime. The site root (`index.html` on `main`) is what GitHub Pages serves.
 - Storage: localStorage behind one small storage module (load / save / list / history), so it could move to IndexedDB later.
