@@ -167,7 +167,10 @@ function historyPage(title) {
   return `<h1>History of ${escapeHtml(title)}</h1>${tabs(title, 'history')}
     <form id="history-form" class="history-form">
       ${compareControls}
-      <ol class="history" reversed>${rows}</ol>
+      <fieldset class="history-fieldset">
+        <legend class="visually-hidden">Revision list and selection</legend>
+        <ol class="history" reversed>${rows}</ol>
+      </fieldset>
     </form>`;
 }
 
@@ -227,7 +230,7 @@ function diffPage(title, oldParam, newParam) {
           <span class="diff-stat-add">+${additions} ${additions === 1 ? 'line' : 'lines'}</span>,
           <span class="diff-stat-del">−${deletions} ${deletions === 1 ? 'line' : 'lines'}</span>
         </p>
-        <div class="diff-container" role="region" aria-label="Differences table">
+        <div class="diff-container" role="region" aria-label="Differences table" tabindex="0">
           <table class="diff-table">
             <thead>
               <tr>
@@ -402,15 +405,29 @@ function route() {
   if (flash) { html = `<p class="notice" role="status">${escapeHtml(flash)}</p>` + html; flash = ''; }
   app.innerHTML = html;
   document.title = `${docTitle} · pocket-wiki`;
+  const a11yStatus = document.getElementById('a11y-status');
+  if (a11yStatus) a11yStatus.textContent = `Navigated to ${docTitle}`;
   app.focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }
 
-document.getElementById('search-form').addEventListener('submit', e => {
-  e.preventDefault();
-  const q = new FormData(e.target).get('q').trim();
-  if (q) location.hash = '#/special/Search/q=' + encodeURIComponent(q);
-});
+const searchForm = document.getElementById('search-form');
+const searchInput = document.getElementById('search-input');
+if (searchForm) {
+  searchForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const q = new FormData(e.target).get('q').trim();
+    if (q) location.hash = '#/special/Search/q=' + encodeURIComponent(q);
+  });
+}
+if (searchInput) {
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      searchInput.blur();
+    }
+  });
+}
 
 const skinSelect = document.getElementById('skin-select');
 if (skinSelect) {
