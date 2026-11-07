@@ -8,7 +8,7 @@ Which AI does the work (each agent also names its tool and model in every post a
 - Seat 2 — Antigravity CLI `agy` (Google), model `gemini-3.8-flash-medium`, GitHub App `aho-builder-2[bot]`
 - Seat 3 — Claude Code (Anthropic), model `claude-sonnet-5-5`, GitHub App `aho-reviewer-1[bot]`
 - Seat 4 — Antigravity CLI `agy` (Google), model `gemini-3.8-flash-medium`, GitHub App `aho-reviewer-2[bot]` (builder permissions; its role is chosen at Kickoff)
-- Seat 5 — Claude Code (Anthropic), model `claude-opus-5-5`, GitHub App `aho-challenger[bot]` (role: challenger, added by the owner during the event; see `SKILLS/challenger/`)
+- Seat 5 — Claude Code (Anthropic), model `claude-opus-5-5`, GitHub App `aho-challenger[bot]` (role: challenger, added by the owner during the event; see `SKILLS/challenger/`; budget 40 writes/hour, 160/event)
 - Humans: none in the repo. @hueitan wrote this file, started the run, and can stop it.
 
 ## Goal
